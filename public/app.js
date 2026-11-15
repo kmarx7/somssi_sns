@@ -498,9 +498,14 @@ function renderReelsChannel(r) {
       <div class="preview-pane">
         <div class="preview-frame-title">
           <span>📱 Reels / TikTok 15s Live Preview</span>
-          <button type="button" id="reels-play-btn" class="btn btn-secondary btn-sm">
-            ${state.reelsPlayTimer ? '⏸ 일시정지' : '▶ 15초 시뮬레이션 재생'}
-          </button>
+          <div style="display:flex;gap:6px;">
+            <button type="button" id="reels-play-btn" class="btn btn-secondary btn-sm">
+              ${state.reelsPlayTimer ? '⏸ 일시정지' : '▶ 15초 시뮬레이션 재생'}
+            </button>
+            <button type="button" id="copy-reels-all-btn" class="btn btn-primary btn-sm">
+              📋 릴스 자막·캡션·태그 복사
+            </button>
+          </div>
         </div>
         <div class="reels-phone">
           <div>
@@ -588,6 +593,24 @@ function renderReelsChannel(r) {
     });
   });
 
+  panel.querySelector('#copy-reels-all-btn')?.addEventListener('click', async () => {
+    const pubR = (state.publishedPreview || getActiveData()).reels;
+    const text = [
+      `[Hook (0-2s)]`,
+      `EN: ${pubR.hook.en}`,
+      `KR: ${pubR.hook.kr}`,
+      ``,
+      `[On-Screen Subtitles (15s)]`,
+      ...(pubR.onscreen_text || []).map((l, i) => `${i + 1}. ${l}`),
+      ``,
+      `[Reels / TikTok Caption]`,
+      `${pubR.caption}`,
+      `${(pubR.hashtags || []).join(' ')}`
+    ].join('\n');
+    await navigator.clipboard.writeText(text);
+    alert('릴스/틱톡용 화면 자막(15초)과 업로드 캡션·해시태그가 클립보드에 복사되었습니다!');
+  });
+
   const playBtn = panel.querySelector('#reels-play-btn');
   if (playBtn) {
     playBtn.addEventListener('click', () => {
@@ -626,7 +649,12 @@ function renderInstagramChannel(ig) {
       <div class="preview-pane">
         <div class="preview-frame-title">
           <span>📸 Instagram 4-Card Carousel Preview</span>
-          <span>Slide ${slideIdx + 1} / ${cards.length}</span>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <span>Slide ${slideIdx + 1} / ${cards.length}</span>
+            <button type="button" id="copy-ig-caption-btn" class="btn btn-primary btn-sm">
+              📋 인스타 캡션+해시태그 복사
+            </button>
+          </div>
         </div>
         <div class="ig-mockup">
           <div class="ig-header">
@@ -728,6 +756,13 @@ function renderInstagramChannel(ig) {
   const liveCanvas = panel.querySelector('#ig-live-canvas');
   renderIgCardToCanvas(liveCanvas, currentCard, slideIdx, cards.length);
 
+  panel.querySelector('#copy-ig-caption-btn')?.addEventListener('click', async () => {
+    const pubIg = (state.publishedPreview || getActiveData()).instagram_feed;
+    const text = `${pubIg.caption}\n\n${(pubIg.hashtags || []).join(' ')}`;
+    await navigator.clipboard.writeText(text);
+    alert('인스타그램 본문 캡션과 해시태그가(UTM 링크 치환 포함) 클립보드에 복사되었습니다!');
+  });
+
   panel.querySelector('#ig-prev-btn')?.addEventListener('click', () => {
     state.igSlideIdx = (slideIdx - 1 + cards.length) % cards.length;
     renderInstagramChannel(getActiveData().instagram_feed);
@@ -790,7 +825,12 @@ function renderThreadsChannel(th) {
       <div class="preview-pane">
         <div class="preview-frame-title">
           <span>🧵 Threads Conversational Post Preview</span>
-          <span>${rawText.length} / 450 chars</span>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <span>${rawText.length} / 450 chars</span>
+            <button type="button" id="copy-threads-text-btn" class="btn btn-primary btn-sm">
+              📋 스레드 본문 복사
+            </button>
+          </div>
         </div>
         <div class="threads-mockup">
           <div class="threads-row">
@@ -835,6 +875,12 @@ function renderThreadsChannel(th) {
       </div>
     </div>
   `;
+
+  panel.querySelector('#copy-threads-text-btn')?.addEventListener('click', async () => {
+    const pubTh = (state.publishedPreview || getActiveData()).threads;
+    await navigator.clipboard.writeText(pubTh.text || '');
+    alert('스레드(Threads) 게시물 본문이(UTM 링크 치환 포함) 클립보드에 복사되었습니다!');
+  });
 }
 
 function renderNaverBlogChannel(nb) {
