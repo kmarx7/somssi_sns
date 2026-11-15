@@ -595,34 +595,62 @@ function renderChannels() {
   `;
 }
 
+function buildCurrentGeneratePayload() {
+  return {
+    mode: 'generate',
+    date: document.getElementById('trend-date').value,
+    trend: {
+      title: document.getElementById('trend-title').value,
+      summary: document.getElementById('trend-summary').value,
+      source: document.getElementById('trend-source').value,
+      language: document.getElementById('trend-lang').value
+    }
+  };
+}
+
+async function openSubscriptionBridgeModal(inputPayload) {
+  const res = await fetch('/api/subscription/prompt', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ input: inputPayload })
+  });
+  const data = await res.json();
+  state.lastPromptBundle = data.promptBundle;
+  state.lastBridgeInput = inputPayload;
+  document.getElementById('sub-prompt-preview-pre').textContent =
+    data.promptBundle?.combinedPrompt || '';
+  document.getElementById('sub-bridge-dialog').showModal();
+}
+
 async function generateDraft() {
+  const provider = document.getElementById('subscription-provider').value;
+  const inputPayload = buildCurrentGeneratePayload();
+
+  if (provider === 'web-subscription') {
+    await openSubscriptionBridgeModal(inputPayload);
+    return;
+  }
+
   const btn = document.getElementById('generate-btn');
   btn.disabled = true;
-  btn.textContent = '생성 중...';
+  btn.textContent = '구독 모델로 초안 생성 중...';
   try {
-    const payload = {
-      date: document.getElementById('trend-date').value,
-      trend: {
-        title: document.getElementById('trend-title').value,
-        summary: document.getElementById('trend-summary').value,
-        source: document.getElementById('trend-source').value,
-        language: document.getElementById('trend-lang').value
-      },
-      apiKey: document.getElementById('openai-key').value.trim(),
-      model: document.getElementById('openai-model').value.trim()
-    };
     const res = await fetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({
+        ...inputPayload,
+        provider
+      })
     });
     const data = await res.json();
     state.currentOutput = data.output;
     state.publishedPreview = data.publishedPreview;
     state.validation = data.validation;
+    state.lastPromptBundle = data.promptBundle;
     state.reelsSceneIdx = 0;
     state.igSlideIdx = 0;
-    document.getElementById('engine-badge').textContent = `Engine: ${data.engineUsed}`;
+    document.getElementById('engine-badge').textContent = `구독 모드: ${data.engineUsed}`;
     renderSidebarStatus();
     renderChannels();
   } finally {
@@ -638,25 +666,38 @@ async function reviseDraft() {
     alert('수정 지시어를 입력해주세요.');
     return;
   }
+
+  const provider = document.getElementById('subscription-provider').value;
+  const revisePayload = {
+    mode: 'revise',
+    channel: state.activeChannel,
+    instruction,
+    previous_output: state.currentOutput
+  };
+
+  if (provider === 'web-subscription') {
+    await openSubscriptionBridgeModal(revisePayload);
+    return;
+  }
+
   const btn = document.getElementById('revise-btn');
   btn.disabled = true;
-  btn.textContent = '수정 중...';
+  btn.textContent = '구독 모델로 수정 중...';
   try {
     const res = await fetch('/api/revise', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        channel: state.activeChannel,
-        instruction,
-        previous_output: state.currentOutput,
-        apiKey: document.getElementById('openai-key').value.trim(),
-        model: document.getElementById('openai-model').value.trim()
+        ...revisePayload,
+        provider
       })
     });
     const data = await res.json();
     state.currentOutput = data.output;
     state.publishedPreview = data.publishedPreview;
     state.validation = data.validation;
+    state.lastPromptBundle = data.promptBundle;
+    document.getElementById('engine-badge').textContent = `구독 모드: ${data.engineUsed}`;
     renderSidebarStatus();
     renderChannels();
   } finally {
@@ -711,6 +752,53 @@ async function init() {
   document.getElementById('preview-utm-toggle').addEventListener('change', (e) => {
     state.previewUtm = e.target.checked;
     renderChannels();
+  });
+
+  // Web Subscription Bridge Modal
+  document.getElementById('open-sub-bridge-btn').addEventListener('click', async () => {
+    await openSubscriptionBridgeModal(buildCurrentGeneratePayload());
+  });
+
+  document.getElementById('copy-sub-prompt-btn').addEventListener('click', async () => {
+    const text = document.getElementById('sub-prompt-preview-pre').textContent;
+    await navigator.clipboard.writeText(text);
+    const btn = document.getElementById('copy-sub-prompt-btn');
+    btn.textContent = '✓ 클립보드에 복사 완료! (ChatGPT / Claude / Gemini에 붙여넣기)';
+    setTimeout(() => {
+      btn.textContent = '1단계: 전체 프롬프트(System + Schema + Trend) 복사';
+    }, 2500);
+  });
+
+  document.getElementById('apply-sub-response-btn').addEventListener('click', async () => {
+    const rawText = document.getElementById('sub-response-textarea').value.trim();
+    if (!rawText) {
+      alert('구독 AI가 출력한 JSON 응답을 붙여넣어 주세요.');
+      return;
+    }
+    const bridgeInput = state.lastBridgeInput || { mode: 'generate' };
+    const res = await fetch('/api/subscription/import', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        rawText,
+        mode: bridgeInput.mode,
+        channel: bridgeInput.channel,
+        previous_output: bridgeInput.previous_output,
+        serviceName: 'ChatGPT/Claude/Gemini Web'
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      alert(`JSON 파싱 오류: ${data.error}`);
+      return;
+    }
+    state.currentOutput = data.output;
+    state.publishedPreview = data.publishedPreview;
+    state.validation = data.validation;
+    document.getElementById('engine-badge').textContent = `구독 모드: ${data.engineUsed}`;
+    renderSidebarStatus();
+    renderChannels();
+    document.getElementById('sub-bridge-dialog').close();
   });
 
   // Ground Truth Modal
@@ -778,7 +866,24 @@ async function init() {
   });
 
   // Generate initial sample draft automatically on load
-  await generateDraft();
+  const savedOutput = state.currentOutput;
+  if (!savedOutput) {
+    const res = await fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...buildCurrentGeneratePayload(),
+        provider: 'local-rule-engine'
+      })
+    });
+    const data = await res.json();
+    state.currentOutput = data.output;
+    state.publishedPreview = data.publishedPreview;
+    state.validation = data.validation;
+    document.getElementById('engine-badge').textContent = `구독 모드: ${data.engineUsed}`;
+    renderSidebarStatus();
+    renderChannels();
+  }
 }
 
 init();

@@ -59,19 +59,21 @@
           <span>출처 (Source)</span>
           <input type="text" id="trend-source" placeholder="출처 입력" />
         </label>
-        <details class="llm-settings">
-          <summary>OpenAI API 설정 (선택 · 미입력 시 내장 Rule Engine 사용)</summary>
-          <div class="llm-fields">
-            <label class="field">
-              <span>OpenAI API Key</span>
-              <input type="password" id="openai-key" placeholder="sk-..." autocomplete="off" />
-            </label>
-            <label class="field">
-              <span>Model</span>
-              <input type="text" id="openai-model" value="gpt-4o-mini" />
-            </label>
-          </div>
-        </details>
+        <div class="llm-settings">
+          <label class="field" style="margin-bottom:6px;">
+            <span><strong>AI 구독 모델 선택 (API 키 불필요)</strong></span>
+            <select id="subscription-provider">
+              <option value="local-rule-engine">⚡ 내장 솜씨 룰 엔진 (즉시 생성)</option>
+              <option value="claude-cli">🟣 Claude Pro/Max 구독 (로컬 Claude CLI 연동)</option>
+              <option value="codex-cli">🟢 ChatGPT Plus/Pro 구독 (로컬 Codex CLI 연동)</option>
+              <option value="gemini-cli">🔵 Gemini Advanced 구독 (로컬 Gemini CLI 연동)</option>
+              <option value="web-subscription">🌐 웹 구독 연동 (ChatGPT·Claude·Gemini 웹 복사/붙여넣기)</option>
+            </select>
+          </label>
+          <button type="button" id="open-sub-bridge-btn" class="btn btn-secondary btn-sm" style="width:100%;">
+            📋 웹 구독(ChatGPT/Claude/Gemini) 프롬프트 복사 &amp; 응답 붙여넣기
+          </button>
+        </div>
         <button type="button" id="generate-btn" class="btn btn-primary btn-block">
           4개 채널 초안 생성 (Generate Mode)
         </button>
@@ -213,6 +215,48 @@
       <footer class="modal-footer">
         <button type="button" id="copy-publish-json-btn" class="btn btn-secondary">UTM 치환 JSON 복사</button>
         <button type="button" id="confirm-publish-btn" class="btn btn-primary">최종 승인 및 전송</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <!-- Modal: Web Subscription Bridge (ChatGPT Plus / Claude Pro / Gemini Advanced) -->
+  <dialog id="sub-bridge-dialog" class="modal">
+    <form method="dialog" class="modal-box">
+      <header class="modal-header">
+        <h2>🌐 웹 AI 구독 모델 연동 (ChatGPT Plus · Claude Pro · Gemini Advanced)</h2>
+        <button type="submit" class="btn btn-ghost btn-sm" aria-label="닫기">✕</button>
+      </header>
+      <div class="modal-body">
+        <p class="helper-text">
+          유료 API 과금 없이 현재 사용 중인 웹 구독 계정(ChatGPT Plus, Claude Pro, Gemini Advanced)에 아래 프롬프트를 붙여넣고, 생성된 JSON 응답을 아래 입력창에 붙여넣으면 4개 채널 미리보기와 규격 검수가 즉시 반영됩니다.
+        </p>
+        <div class="field-row" style="margin-bottom:10px;">
+          <button type="button" id="copy-sub-prompt-btn" class="btn btn-primary">
+            1단계: 전체 프롬프트(System + Schema + Trend) 복사
+          </button>
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+            <a href="https://chatgpt.com" target="_blank" rel="noopener" class="btn btn-secondary btn-sm">ChatGPT 열기 ↗</a>
+            <a href="https://claude.ai" target="_blank" rel="noopener" class="btn btn-secondary btn-sm">Claude 열기 ↗</a>
+            <a href="https://gemini.google.com" target="_blank" rel="noopener" class="btn btn-secondary btn-sm">Gemini 열기 ↗</a>
+          </div>
+        </div>
+        <details style="margin-bottom:12px;">
+          <summary style="cursor:pointer;font-size:0.82rem;font-weight:600;">전달될 통합 프롬프트 미리보기</summary>
+          <pre id="sub-prompt-preview-pre" class="code-block" style="max-height:180px;"></pre>
+        </details>
+        <label class="field">
+          <span>2단계: 구독 AI가 출력한 JSON 응답 붙여넣기 (코드블록 포함 그대로 붙여넣어도 자동 추출됨)</span>
+          <textarea
+            id="sub-response-textarea"
+            rows="8"
+            placeholder='{"mode": "generate", "trend_fit": { ... }, "reels": { ... }, ...}'
+          ></textarea>
+        </label>
+      </div>
+      <footer class="modal-footer">
+        <button type="button" id="apply-sub-response-btn" class="btn btn-primary">
+          응답 JSON 검증 및 4개 채널 미리보기에 적용
+        </button>
       </footer>
     </form>
   </dialog>

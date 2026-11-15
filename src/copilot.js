@@ -1,3 +1,5 @@
+import { spawn } from 'node:child_process';
+import fs from 'node:fs';
 import {
   buildFullSystemPrompt,
   loadGroundTruth,
@@ -5,6 +7,12 @@ import {
   loadRagKnowledgeBase
 } from './promptRenderer.js';
 import { validateMarketingOutput } from './validator.js';
+
+const CLI_PATHS = {
+  'claude-cli': ['/Users/kapital/.local/bin/claude', 'claude'],
+  'codex-cli': ['/opt/homebrew/bin/codex', 'codex'],
+  'gemini-cli': ['/Users/kapital/.hermes/node/bin/gemini', 'gemini']
+};
 
 const CULTURE_KEYWORDS = [
   'gayageum',
@@ -41,6 +49,178 @@ const CULTURE_KEYWORDS = [
 ];
 
 /**
+ * Resolves the executable path for a subscription CLI tool if installed on the system.
+ */
+export function resolveSubscriptionCliBinary(provider) {
+  const candidates = CLI_PATHS[provider] || [];
+  for (const candidate of candidates) {
+    if (candidate.startsWith('/') && fs.existsSync(candidate)) {
+      return candidate;
+    }
+  }
+  return candidates[candidates.length - 1] || null;
+}
+
+/**
+ * Returns status of available subscription providers on the host system.
+ */
+export function getSubscriptionProvidersStatus() {
+  return [
+    {
+      id: 'claude-cli',
+      name: 'Claude Pro/Max 구독 (Claude CLI)',
+      installed: fs.existsSync('/Users/kapital/.local/bin/claude'),
+      mode: 'cli-subscription'
+    },
+    {
+      id: 'codex-cli',
+      name: 'ChatGPT Plus/Pro 구독 (Codex CLI)',
+      installed: fs.existsSync('/opt/homebrew/bin/codex'),
+      mode: 'cli-subscription'
+    },
+    {
+      id: 'gemini-cli',
+      name: 'Gemini Advanced 구독 (Gemini CLI)',
+      installed: fs.existsSync('/Users/kapital/.hermes/node/bin/gemini'),
+      mode: 'cli-subscription'
+    },
+    {
+      id: 'web-subscription',
+      name: '웹 브라우저 구독 연동 (ChatGPT / Claude / Gemini 웹 복사·붙여넣기)',
+      installed: true,
+      mode: 'web-subscription'
+    },
+    {
+      id: 'local-rule-engine',
+      name: '내장 솜씨 룰 엔진 (즉시 생성 · 오프라인)',
+      installed: true,
+      mode: 'local'
+    }
+  ];
+}
+
+/**
+ * Builds a complete, ready-to-paste prompt bundle for Web Subscription users
+ * (ChatGPT Plus, Claude Pro Projects, Gemini Gems) or CLI subscription execution.
+ */
+export function buildSubscriptionPromptBundle(
+  input,
+  groundTruth = loadGroundTruth(),
+  ragKb = loadRagKnowledgeBase()
+) {
+  const systemPrompt = buildFullSystemPrompt(groundTruth, ragKb);
+  const outputSchema = loadOutputSchema();
+  const userJson = JSON.stringify(input, null, 2);
+
+  const combinedPrompt = [
+    systemPrompt.trim(),
+    '',
+    '---',
+    '## STRICT JSON SCHEMA',
+    'Return ONLY a single valid JSON object conforming strictly to this schema (no markdown code fences around the response if possible, no extra commentary):',
+    JSON.stringify(outputSchema.schema, null, 2),
+    '',
+    '---',
+    '## INPUT JSON',
+    userJson
+  ].join('\n');
+
+  return {
+    systemPrompt,
+    userJson,
+    combinedPrompt
+  };
+}
+
+/**
+ * Extracts a JSON object from raw CLI or pasted web LLM output (even if wrapped in ```json ... ```).
+ */
+export function extractJsonFromSubscriptionOutput(rawText = '') {
+  const trimmed = String(rawText).trim();
+  if (!trimmed) {
+    throw new Error('구독 모델 응답이 비어 있습니다.');
+  }
+  try {
+    return JSON.parse(trimmed);
+  } catch {
+    const fenced = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/i);
+    if (fenced && fenced[1]) {
+      return JSON.parse(fenced[1].trim());
+    }
+    const firstBrace = trimmed.indexOf('{');
+    const lastBrace = trimmed.lastIndexOf('}');
+    if (firstBrace !== -1 && lastBrace > firstBrace) {
+      return JSON.parse(trimmed.slice(firstBrace, lastBrace + 1));
+    }
+    throw new Error('응답에서 유효한 JSON 객체를 찾을 수 없습니다.');
+  }
+}
+
+/**
+ * Executes a local subscription-authenticated CLI (`claude`, `codex`, `gemini`) without any paid API key.
+ */
+export function callSubscriptionCli(provider, combinedPrompt, timeoutMs = 90000) {
+  return new Promise((resolve, reject) => {
+    const bin = resolveSubscriptionCliBinary(provider);
+    if (!bin) {
+      return reject(new Error(`Unknown subscription CLI provider: ${provider}`));
+    }
+
+    let args = [];
+    if (provider === 'claude-cli') {
+      args = ['-p', combinedPrompt, '--output-format', 'text'];
+    } else if (provider === 'codex-cli') {
+      args = ['exec', combinedPrompt];
+    } else if (provider === 'gemini-cli') {
+      args = ['-p', combinedPrompt];
+    } else {
+      return reject(new Error(`Unsupported CLI provider: ${provider}`));
+    }
+
+    const child = spawn(bin, args, {
+      env: { ...process.env, NO_COLOR: '1' },
+      stdio: ['ignore', 'pipe', 'pipe']
+    });
+
+    let stdout = '';
+    let stderr = '';
+
+    const timer = setTimeout(() => {
+      child.kill('SIGTERM');
+      reject(new Error(`${provider} 실행 시간이 초과되었습니다 (${timeoutMs / 1000}s).`));
+    }, timeoutMs);
+
+    child.stdout.on('data', (chunk) => {
+      stdout += chunk.toString();
+    });
+
+    child.stderr.on('data', (chunk) => {
+      stderr += chunk.toString();
+    });
+
+    child.on('error', (err) => {
+      clearTimeout(timer);
+      reject(err);
+    });
+
+    child.on('close', (code) => {
+      clearTimeout(timer);
+      if (code !== 0 && !stdout.trim()) {
+        return reject(
+          new Error(`${provider} 종료 코드 ${code}: ${stderr.trim() || '구독 로그인 상태를 확인해주세요.'}`)
+        );
+      }
+      try {
+        const parsed = extractJsonFromSubscriptionOutput(stdout);
+        resolve(parsed);
+      } catch (err) {
+        reject(new Error(`${provider} JSON 파싱 실패: ${err.message}`));
+      }
+    });
+  });
+}
+
+/**
  * Scores how naturally a trend connects to the SOMSSI 120-min gayageum class (0–10).
  */
 export function scoreTrendFit(trend = {}) {
@@ -57,7 +237,7 @@ export function scoreTrendFit(trend = {}) {
 
 /**
  * Generates a deterministic, 100% rule-compliant 4-channel draft when running
- * in local/template mode or as a fallback when no external LLM API key is set.
+ * in local rule engine mode or as a fallback.
  */
 export function generateRuleCompliantDraft(input, groundTruth = loadGroundTruth()) {
   const p = groundTruth.placeholders || {};
@@ -381,64 +561,22 @@ export function reviseRuleCompliantDraft(input, groundTruth = loadGroundTruth())
 }
 
 /**
- * Calls OpenAI Chat Completions API with Strict Structured Output JSON Schema if OPENAI_API_KEY is available.
- */
-async function callOpenAIStructured(systemPrompt, userPayload, outputSchema, apiKey, model = 'gpt-4o-mini') {
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`
-    },
-    body: JSON.stringify({
-      model,
-      temperature: 0.4,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: JSON.stringify(userPayload) }
-      ],
-      response_format: {
-        type: 'json_schema',
-        json_schema: outputSchema
-      }
-    })
-  });
-
-  if (!response.ok) {
-    const errText = await response.text();
-    throw new Error(`OpenAI API error (${response.status}): ${errText}`);
-  }
-
-  const data = await response.json();
-  const content = data.choices?.[0]?.message?.content;
-  if (!content) throw new Error('Empty response from OpenAI API.');
-  return JSON.parse(content);
-}
-
-/**
- * Main entrypoint for SOMSSI Global Marketing Copilot (Generate & Revise modes).
+ * Main entrypoint for SOMSSI Global Marketing Copilot using Subscription Models (no API key).
  */
 export async function runCopilot(input, options = {}) {
   const groundTruth = options.groundTruth || loadGroundTruth();
   const ragKb = options.ragKb || loadRagKnowledgeBase();
-  const outputSchema = loadOutputSchema();
-  const systemPrompt = buildFullSystemPrompt(groundTruth, ragKb);
+  const provider = options.provider || 'local-rule-engine';
+  const promptBundle = buildSubscriptionPromptBundle(input, groundTruth, ragKb);
 
-  const apiKey = options.apiKey || process.env.OPENAI_API_KEY || '';
   let result;
-  let engineUsed = 'local-rule-engine';
+  let engineUsed = provider;
 
-  if (apiKey && options.useLLM !== false) {
+  if (['claude-cli', 'codex-cli', 'gemini-cli'].includes(provider)) {
     try {
-      result = await callOpenAIStructured(
-        systemPrompt,
-        input,
-        outputSchema,
-        apiKey,
-        options.model || 'gpt-4o-mini'
-      );
-      engineUsed = `openai:${options.model || 'gpt-4o-mini'}`;
-      // Enforce Revise mode immutability on non-target channels even if LLM drifted
+      result = await callSubscriptionCli(provider, promptBundle.combinedPrompt);
+      engineUsed = `subscription:${provider}`;
+      // Enforce Revise mode immutability on non-target channels
       if (input.mode === 'revise' && input.previous_output && input.channel) {
         for (const ch of ['reels', 'instagram_feed', 'threads', 'naver_blog']) {
           if (ch !== input.channel && input.previous_output[ch]) {
@@ -453,8 +591,9 @@ export async function runCopilot(input, options = {}) {
           : generateRuleCompliantDraft(input, groundTruth);
       result.reviewer_notes = [
         ...(result.reviewer_notes || []),
-        `LLM API fallback triggered (${err.message}); generated via local rule-compliant engine.`
+        `구독 CLI(${provider}) 폴백 안내 (${err.message}); 내장 룰 엔진으로 초안을 생성했습니다.`
       ];
+      engineUsed = `fallback:local-rule-engine`;
     }
   } else {
     result =
@@ -467,6 +606,7 @@ export async function runCopilot(input, options = {}) {
   return {
     output: result,
     validation,
-    engineUsed
+    engineUsed,
+    promptBundle
   };
 }

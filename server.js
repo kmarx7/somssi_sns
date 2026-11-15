@@ -11,7 +11,12 @@ import {
   saveGroundTruth
 } from './src/promptRenderer.js';
 import { fetchLiveTrends, PRESET_TRENDS } from './src/trends.js';
-import { runCopilot } from './src/copilot.js';
+import {
+  buildSubscriptionPromptBundle,
+  extractJsonFromSubscriptionOutput,
+  getSubscriptionProvidersStatus,
+  runCopilot
+} from './src/copilot.js';
 import { validateMarketingOutput } from './src/validator.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -48,7 +53,7 @@ function readRequestBody(req) {
       if (!raw) return resolve({});
       try {
         resolve(JSON.parse(raw));
-      } catch (err) {
+      } catch {
         reject(new Error('Invalid JSON payload'));
       }
     });
@@ -70,7 +75,8 @@ export const server = http.createServer(async (req, res) => {
         ragKb,
         outputSchema,
         systemPrompt,
-        presets: PRESET_TRENDS
+        presets: PRESET_TRENDS,
+        subscriptionProviders: getSubscriptionProvidersStatus()
       });
     }
 
@@ -107,9 +113,8 @@ export const server = http.createServer(async (req, res) => {
         date: body.date || new Date().toISOString().slice(0, 10),
         trend: body.trend || PRESET_TRENDS[0]
       };
-      const { output, validation, engineUsed } = await runCopilot(payload, {
-        apiKey: body.apiKey,
-        model: body.model
+      const { output, validation, engineUsed, promptBundle } = await runCopilot(payload, {
+        provider: body.provider || 'local-rule-engine'
       });
       const publishedPreview = resolveBookingUrlsForPublish(output);
       return sendJson(res, 200, {
@@ -117,7 +122,8 @@ export const server = http.createServer(async (req, res) => {
         output,
         validation,
         publishedPreview,
-        engineUsed
+        engineUsed,
+        promptBundle
       });
     }
 
@@ -129,9 +135,8 @@ export const server = http.createServer(async (req, res) => {
         instruction: body.instruction || '',
         previous_output: body.previous_output
       };
-      const { output, validation, engineUsed } = await runCopilot(payload, {
-        apiKey: body.apiKey,
-        model: body.model
+      const { output, validation, engineUsed, promptBundle } = await runCopilot(payload, {
+        provider: body.provider || 'local-rule-engine'
       });
       const publishedPreview = resolveBookingUrlsForPublish(output);
       return sendJson(res, 200, {
@@ -139,7 +144,34 @@ export const server = http.createServer(async (req, res) => {
         output,
         validation,
         publishedPreview,
-        engineUsed
+        engineUsed,
+        promptBundle
+      });
+    }
+
+    if (req.method === 'POST' && url.pathname === '/api/subscription/prompt') {
+      const body = await readRequestBody(req);
+      const promptBundle = buildSubscriptionPromptBundle(body.input || {});
+      return sendJson(res, 200, { promptBundle });
+    }
+
+    if (req.method === 'POST' && url.pathname === '/api/subscription/import') {
+      const body = await readRequestBody(req);
+      const parsed = extractJsonFromSubscriptionOutput(body.rawText || '');
+      if (body.mode === 'revise' && body.previous_output && body.channel) {
+        for (const ch of ['reels', 'instagram_feed', 'threads', 'naver_blog']) {
+          if (ch !== body.channel && body.previous_output[ch]) {
+            parsed[ch] = JSON.parse(JSON.stringify(body.previous_output[ch]));
+          }
+        }
+      }
+      const validation = validateMarketingOutput(parsed);
+      const publishedPreview = resolveBookingUrlsForPublish(parsed);
+      return sendJson(res, 200, {
+        output: parsed,
+        validation,
+        publishedPreview,
+        engineUsed: `web-subscription:${body.serviceName || 'manual-paste'}`
       });
     }
 
