@@ -1,0 +1,14 @@
+{
+  "name": "somssi-sns-copilot",
+  "version": "1.0.0",
+  "description": "SOMSSI Global Marketing Copilot — 4-Channel Content Generation, Validation & Review Pipeline",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "sync-prompt": "node -e \"import('./src/promptRenderer.js').then(m => { m.syncRenderedSystemPrompt(); console.log('Synced somssi_system_prompt.md'); })\"",
+    "test": "node --test tests/*.test.js"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

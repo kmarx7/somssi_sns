@@ -1,0 +1,41 @@
+{
+  "placeholders": {
+    "PRODUCT_NAME_EN": "SOMSSI Gayageum & Hanbok One-Day Class",
+    "PRODUCT_NAME_KR": "솜씨(SOMSSI) 가야금·한복 원데이클래스",
+    "VENUE_NAME_OR_AREA": "Near Songdo Central Park (송도 센트럴파크 인근)",
+    "N": "25",
+    "TRANSPORT": "taxi or airport limousine",
+    "HANBOK_FITTING_INCLUDED": "including",
+    "INCLUDED/EXCLUDED": "included",
+    "KR / EN / ...": "KR / EN (Korean and English)",
+    "MIN_LAYOVER_HOURS": "6"
+  },
+  "ground_truth_facts": {
+    "product_name_en": "SOMSSI Gayageum & Hanbok One-Day Class",
+    "product_name_kr": "솜씨(SOMSSI) 가야금·한복 원데이클래스",
+    "curriculum_basis": "SOMSSI's own textbook 《줄을 다루는 솜씨》",
+    "location_en": "Songdo, Incheon — Near Songdo Central Park",
+    "location_kr": "인천 송도 — 송도 센트럴파크 인근",
+    "access_from_airport_en": "About 25 minutes from Incheon Int'l Airport by taxi or airport limousine",
+    "access_from_airport_kr": "인천국제공항에서 택시 또는 공항리무진으로 약 25분 소요",
+    "duration_minutes": 120,
+    "hanbok_fitting": "including Hanbok fitting (한복 착용 포함)",
+    "price": "99,000 KRW per person, VAT included (1인 99,000원, 부가세 포함)",
+    "included": "Gayageum use during class, Hanbok rental, traditional tea & refreshments, lesson",
+    "outcome": "Beginners with no musical background learn to play the main melody of \"Arirang\"",
+    "languages_of_instruction": "KR / EN (Korean and English)",
+    "booking_placeholder": "{{BOOKING_URL}}",
+    "min_layover_hours": 6,
+    "layover_notice_en": "Check your visa / K-ETA eligibility before leaving the airport.",
+    "layover_notice_kr": "공항 밖으로 나가기 전 비자·K-ETA 요건을 꼭 확인하세요."
+  },
+  "publishing": {
+    "base_booking_url": "https://somssi.kr/book",
+    "utm_links": {
+      "reels": "https://somssi.kr/book?utm_source=instagram_tiktok&utm_medium=reels&utm_campaign=daily_trend",
+      "instagram_feed": "https://somssi.kr/book?utm_source=instagram&utm_medium=feed_carousel&utm_campaign=daily_trend",
+      "threads": "https://somssi.kr/book?utm_source=threads&utm_medium=social_post&utm_campaign=daily_trend",
+      "naver_blog": "https://somssi.kr/book?utm_source=naver&utm_medium=blog&utm_campaign=b2b_concierge"
+    }
+  }
+}

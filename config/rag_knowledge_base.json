@@ -1,0 +1,46 @@
+{
+  "version": "1.0.0",
+  "description": "Verified RAG Knowledge Base for SOMSSI 120-Minute Gayageum One-Day Class in Songdo, Incheon",
+  "entries": [
+    {
+      "id": "rag-timetable-120",
+      "category": "schedule",
+      "title": "120-Minute Session Flow (120분 수업 구성)",
+      "fact_en": "The 120-minute session flows through 4 stages: (1) Welcome traditional Korean tea & refreshments and Hanbok fitting (25 min), (2) Introduction to the 12-string gayageum and basic plucking/flicking techniques using SOMSSI's textbook 《줄을 다루는 솜씨》 (30 min), (3) Step-by-step practice of the main melody of 'Arirang' for complete beginners (45 min), (4) Solo/ensemble performance recording and Hanbok photo time (20 min).",
+      "fact_kr": "120분 클래스는 4단계로 진행돼요: (1) 웰컴 전통 다과·차 시음 및 한복 착용(25분), (2) 자체 교재 《줄을 다루는 솜씨》를 활용한 12현 가야금 구조 이해와 기본 주법 익히기(30분), (3) 악보를 못 읽는 입문자도 따라 할 수 있는 '아리랑' 주선율 단계별 연습(45분), (4) 나만의 연주 영상 촬영 및 한복 포토타임(20분).",
+      "tags": ["schedule", "120분", "일정", "타임테이블", "hanbok", "tea", "arirang"]
+    },
+    {
+      "id": "rag-textbook-method",
+      "category": "curriculum",
+      "title": "Beginner-Friendly Textbook 《줄을 다루는 솜씨》",
+      "fact_en": "SOMSSI's in-house textbook 《줄을 다루는 솜씨》 uses intuitive number and string-color guides so participants who cannot read sheet music can play 'Arirang' within a single session.",
+      "fact_kr": "자체 교재 《줄을 다루는 솜씨》는 오선보 대신 직관적인 줄 번호와 손가락 가이드를 사용해 악보를 전혀 읽지 못하는 외국인·입문자도 한 번의 수업으로 '아리랑' 선율을 연주할 수 있도록 구성되어 있어요.",
+      "tags": ["textbook", "curriculum", "줄을 다루는 솜씨", "beginner", "sheet music", "아리랑"]
+    },
+    {
+      "id": "rag-instrument-gayageum",
+      "category": "instrument",
+      "title": "Gayageum Characteristics (12-String Korean Zither)",
+      "fact_en": "The gayageum is a traditional Korean 12-string zither featuring silk strings rested on movable wooden bridges called 'anjok' (wild-goose feet). Players pluck with the right hand directly with bare fingertips (no picks) and press or vibrate the strings with the left hand ('nonghyeon') to create expressive pitch bends.",
+      "fact_kr": "가야금은 오동나무 울림통 위에 명주실 12줄과 기러기 발 모양의 안족(雁足)을 얹은 한국 전통 현악기예요. 피크 없이 오른손 끝으로 직접 줄을 뜯고 왼손으로 줄을 누르거나 흔드는 '농현'을 통해 깊고 여운 있는 소리를 만듭니다.",
+      "tags": ["gayageum", "가야금", "anjok", "농현", "silk strings", "12-string"]
+    },
+    {
+      "id": "rag-songdo-context",
+      "category": "location_and_weather",
+      "title": "Songdo Indoor Cultural Experience & Layover Convenience",
+      "fact_en": "Located near Songdo Central Park in Incheon, the studio is an indoor cultural space unaffected by rain, heat, or winter cold, making it convenient to pair with a stroll in Songdo Central Park or a 6+ hour Incheon Airport layover.",
+      "fact_kr": "인천 송도 센트럴파크 인근 실내 공간에서 진행되어 비 오는 날이나 더위·추위 등 날씨에 구애받지 않고 쾌적하게 체험할 수 있으며, 송도 센트럴파크 산책 코스와 연계하거나 6시간 이상 인천공항 환승객 일정으로 구성하기에 적합해요.",
+      "tags": ["songdo", "송도", "rainy day", "indoor", "layover", "센트럴파크", "날씨"]
+    },
+    {
+      "id": "rag-b2b-concierge",
+      "category": "b2b",
+      "title": "B2B Concierge & Travel Agency Recommendation Points",
+      "fact_en": "For hotel concierges and inbound travel agencies, the class offers a fixed 120-minute duration, all-inclusive transparent pricing (99,000 KRW per person, VAT included), English and Korean instruction, and no prior musical skill requirement.",
+      "fact_kr": "호텔 컨시어지와 인바운드 여행사 입장에서는 120분 정시 운영, 한복·다과·레슨이 모두 포함된 정찰가(1인 99,000원, 부가세 포함), 한국어·영어 동시 안내, 음악 경험이 없어도 완주 가능한 커리큘럼 덕분에 외국인 투숙객·여행객에게 안정적으로 추천할 수 있어요.",
+      "tags": ["b2b", "concierge", "호텔", "여행사", "컨시어지", "외국인", "추천"]
+    }
+  ]
+}

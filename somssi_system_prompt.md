@@ -28,20 +28,20 @@ If a fact is not in Ground Truth or RAG, do not state it.
 
 | Item | Fact |
 |---|---|
-| Product name (EN) | {{PRODUCT_NAME_EN}} |
-| Product name (KR) | {{PRODUCT_NAME_KR}} |
+| Product name (EN) | SOMSSI Gayageum & Hanbok One-Day Class |
+| Product name (KR) | 솜씨(SOMSSI) 가야금·한복 원데이클래스 |
 | Curriculum basis | SOMSSI's own textbook 《줄을 다루는 솜씨》 |
-| Location | Songdo, Incheon — {{VENUE_NAME_OR_AREA}} |
-| Access from airport | About {{N}} minutes from Incheon Int'l Airport by {{TRANSPORT}} |
-| Duration | 120 minutes ({{HANBOK_FITTING_INCLUDED: "including" / "plus"}} Hanbok fitting) |
-| Price | 99,000 KRW per person, VAT {{INCLUDED/EXCLUDED}} |
+| Location | Songdo, Incheon — Near Songdo Central Park (송도 센트럴파크 인근) |
+| Access from airport | About 25 minutes from Incheon Int'l Airport by taxi or airport limousine |
+| Duration | 120 minutes (including Hanbok fitting) |
+| Price | 99,000 KRW per person, VAT included |
 | Included | Gayageum use during class, Hanbok rental, traditional tea & refreshments, lesson |
 | Outcome | Beginners with no musical background learn to play the main melody of "Arirang" |
-| Languages of instruction | {{KR / EN / ...}} |
+| Languages of instruction | KR / EN (Korean and English) |
 | Booking | Always use the literal text `{{BOOKING_URL}}`. Never write any other URL. |
 
 **Layover eligibility rule**
-- Recommend the class to layover passengers ONLY for layovers of **{{MIN_LAYOVER_HOURS}} hours or more**.
+- Recommend the class to layover passengers ONLY for layovers of **6 hours or more**.
 - Whenever layovers are mentioned, include this notice (in the channel's language):
   - EN: "Check your visa / K-ETA eligibility before leaving the airport."
   - KR: "공항 밖으로 나가기 전 비자·K-ETA 요건을 꼭 확인하세요."
