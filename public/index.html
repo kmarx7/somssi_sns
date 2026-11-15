@@ -27,9 +27,36 @@
     <aside class="sidebar">
       <section class="card">
         <div class="card-header">
-          <h2>1. Daily Trend Input</h2>
+          <h2>1. 주간 7일 편성표 &amp; 트렌드 입력</h2>
           <button type="button" id="fetch-live-btn" class="btn btn-ghost btn-sm">실시간 RSS 불러오기</button>
         </div>
+
+        <div class="weekly-pillar-box">
+          <div class="weekly-pillar-header">
+            <span><strong>요일별 콘텐츠 편성</strong> (주 2회 솜씨 클래스 · 주 5회 한국/인천 문화·관광·미식·K-콘텐츠)</span>
+          </div>
+          <div id="weekly-days-grid" class="weekly-days-grid"></div>
+          <div class="field-row" style="margin-top:8px;">
+            <label class="field" style="margin-bottom:0;">
+              <span>콘텐츠 모드</span>
+              <select id="content-type-select">
+                <option value="somssi_class">🎵 주 2회 정기: 《줄을 다루는 솜씨》 클래스 홍보 (화·금)</option>
+                <option value="culture_magazine">🗞 주 5회 매거진: 한국 전통·인천 관광/음식·K-컬처 뉴스</option>
+              </select>
+            </label>
+            <label class="field" style="margin-bottom:0;">
+              <span>세부 테마 (Pillar)</span>
+              <select id="pillar-select">
+                <option value="somssi_class">《줄을 다루는 솜씨》 원데이클래스</option>
+                <option value="k_pop_drama">K-Pop · K-Drama 최신 문화·촬영지 (월)</option>
+                <option value="incheon_tourism">인천·송도 관광지 &amp; 문화예술 (수)</option>
+                <option value="incheon_food_tea">인천 로컬 음식 &amp; 전통 다과·차 (목)</option>
+                <option value="korean_tradition">한국 전통문화·한복·국악 교양 (토)</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
         <label class="field">
           <span>프리셋 / 수집된 트렌드 선택</span>
           <select id="trend-preset-select"></select>

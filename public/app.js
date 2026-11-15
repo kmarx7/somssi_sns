@@ -1,15 +1,21 @@
 const state = {
   config: null,
   trends: [],
+  weeklyPillars: [],
+  selectedDayIndex: 2, // Default Tuesday (SOMSSI Class)
   activeChannel: 'reels',
   currentOutput: null,
   publishedPreview: null,
   validation: null,
+  extras: null,
   previewUtm: false,
   viewMode: 'split',
   reelsSceneIdx: 0,
   reelsPlayTimer: null,
   igSlideIdx: 0,
+  igCustomBgImages: {}, // slideIdx -> Image element
+  blogCustomBgImages: {}, // sectionIdx -> Image element
+  blogLangMode: 'kr_summary', // 'kr_summary' | 'en_full' | 'bilingual_stacked'
   highlightBlogKeywords: true
 };
 
@@ -34,10 +40,8 @@ function escapeHtml(str = '') {
 
 function formatNaverBodyHtml(rawText = '', keywords = [], highlight = true) {
   let html = escapeHtml(rawText);
-  // Render **bold**
   html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
 
-  // Optionally highlight search keywords
   if (highlight && Array.isArray(keywords)) {
     for (const kw of keywords) {
       if (!kw) continue;
@@ -48,7 +52,6 @@ function formatNaverBodyHtml(rawText = '', keywords = [], highlight = true) {
     }
   }
 
-  // Split lines into paragraphs and bullet lists
   const lines = html.split('\n');
   const blocks = [];
   let currentUl = [];
@@ -80,6 +83,213 @@ function formatNaverBodyHtml(rawText = '', keywords = [], highlight = true) {
 function getActiveData() {
   if (!state.currentOutput) return null;
   return state.previewUtm && state.publishedPreview ? state.publishedPreview : state.currentOutput;
+}
+
+/**
+ * Canvas text wrapping helper for Korean + English strings.
+ */
+function drawWrappedText(ctx, text, x, y, maxWidth, lineHeight, maxLines = 6) {
+  const words = String(text || '').split(/\s+/);
+  let line = '';
+  let currentY = y;
+  let lineCount = 0;
+
+  for (let i = 0; i < words.length; i++) {
+    const testLine = line ? `${line} ${words[i]}` : words[i];
+    const metrics = ctx.measureText(testLine);
+    if (metrics.width > maxWidth && line) {
+      ctx.fillText(line, x, currentY);
+      line = words[i];
+      currentY += lineHeight;
+      lineCount++;
+      if (lineCount >= maxLines - 1) break;
+    } else {
+      line = testLine;
+    }
+  }
+  if (line) {
+    ctx.fillText(line, x, currentY);
+    currentY += lineHeight;
+  }
+  return currentY;
+}
+
+/**
+ * Renders a 1080x1080 Instagram Carousel Card onto a <canvas> element.
+ */
+function renderIgCardToCanvas(canvas, card, slideIdx, totalSlides) {
+  if (!canvas || !card) return;
+  const ctx = canvas.getContext('2d');
+  const W = 1080;
+  const H = 1080;
+  canvas.width = W;
+  canvas.height = H;
+
+  const palettes = [
+    ['#2b1810', '#6b3826', '#f6d59e'],
+    ['#1d322a', '#375a4c', '#fde68a'],
+    ['#422518', '#85462e', '#fed7aa'],
+    ['#1f1b17', '#5c2e1f', '#fcd34d']
+  ];
+  const [c1, c2, accent] = palettes[slideIdx % palettes.length];
+
+  const customImg = state.igCustomBgImages[slideIdx];
+  if (customImg) {
+    const scale = Math.max(W / customImg.width, H / customImg.height);
+    const dw = customImg.width * scale;
+    const dh = customImg.height * scale;
+    ctx.drawImage(customImg, (W - dw) / 2, (H - dh) / 2, dw, dh);
+    ctx.fillStyle = 'rgba(20, 15, 12, 0.62)';
+    ctx.fillRect(0, 0, W, H);
+  } else {
+    const grad = ctx.createLinearGradient(0, 0, W, H);
+    grad.addColorStop(0, c1);
+    grad.addColorStop(1, c2);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+
+    // Subtle 12 silk strings motif
+    ctx.strokeStyle = 'rgba(255, 240, 215, 0.08)';
+    ctx.lineWidth = 2;
+    for (let s = 0; s < 12; s++) {
+      const sy = 140 + s * 70;
+      ctx.beginPath();
+      ctx.moveTo(0, sy);
+      ctx.lineTo(W, sy - 40);
+      ctx.stroke();
+    }
+  }
+
+  // Outer frame border
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.22)';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(56, 56, W - 112, H - 112);
+
+  // Top Header Badge
+  ctx.fillStyle = accent;
+  ctx.font = '700 28px -apple-system, BlinkMacSystemFont, "Noto Sans KR", sans-serif';
+  const roleLabels = ['01 · COVER', '02 · CONTEXT', '03 · EXPERIENCE', '04 · BOOKING & GUIDE'];
+  ctx.fillText(roleLabels[slideIdx] || `0${slideIdx + 1}`, 100, 130);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.75)';
+  ctx.font = '600 26px -apple-system, BlinkMacSystemFont, sans-serif';
+  ctx.fillText(`${slideIdx + 1} / ${totalSlides}`, W - 170, 130);
+
+  // Center Glass Card
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+  ctx.fillRect(92, 210, W - 184, 640);
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.26)';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(92, 210, W - 184, 640);
+
+  // Title KR
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '800 62px -apple-system, BlinkMacSystemFont, "Noto Sans KR", sans-serif';
+  ctx.fillText(card.title.kr || '', 136, 320);
+
+  // Title EN
+  ctx.fillStyle = accent;
+  ctx.font = '700 42px -apple-system, BlinkMacSystemFont, sans-serif';
+  ctx.fillText(card.title.en || '', 136, 385);
+
+  // Divider line
+  ctx.fillStyle = 'rgba(255,255,255,0.28)';
+  ctx.fillRect(136, 425, 160, 4);
+
+  // Body KR
+  ctx.fillStyle = '#f8fafc';
+  ctx.font = '500 38px -apple-system, BlinkMacSystemFont, "Noto Sans KR", sans-serif';
+  const nextY = drawWrappedText(ctx, card.body.kr || '', 136, 500, W - 272, 56, 4);
+
+  // Body EN
+  ctx.fillStyle = '#e2e8f0';
+  ctx.font = '400 32px -apple-system, BlinkMacSystemFont, sans-serif';
+  drawWrappedText(ctx, card.body.en || '', 136, nextY + 30, W - 272, 46, 4);
+
+  // Footer Brand Sign-off
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '700 28px -apple-system, BlinkMacSystemFont, "Noto Sans KR", sans-serif';
+  ctx.fillText('줄을 다루는 솜씨 · SOMSSI SONGDO, INCHEON', 100, H - 100);
+}
+
+/**
+ * Renders a 1200x630 Naver Blog Section Banner / Infographic onto a <canvas>.
+ */
+function renderBlogSectionCanvas(canvas, bannerInfo, secIdx) {
+  if (!canvas || !bannerInfo) return;
+  const ctx = canvas.getContext('2d');
+  const W = 1200;
+  const H = 630;
+  canvas.width = W;
+  canvas.height = H;
+
+  const customImg = state.blogCustomBgImages[secIdx];
+  if (customImg) {
+    const scale = Math.max(W / customImg.width, H / customImg.height);
+    const dw = customImg.width * scale;
+    const dh = customImg.height * scale;
+    ctx.drawImage(customImg, (W - dw) / 2, (H - dh) / 2, dw, dh);
+    ctx.fillStyle = 'rgba(18, 24, 20, 0.65)';
+    ctx.fillRect(0, 0, W, H);
+  } else {
+    const bgColors = [
+      ['#1e352b', '#2c5244'],
+      ['#3d2317', '#7c3f2c'],
+      ['#24201d', '#4a3728'],
+      ['#1b2a34', '#2c4a52']
+    ];
+    const [b1, b2] = bgColors[secIdx % bgColors.length];
+    const grad = ctx.createLinearGradient(0, 0, W, H);
+    grad.addColorStop(0, b1);
+    grad.addColorStop(1, b2);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  // Decorative Frame
+  ctx.strokeStyle = 'rgba(255,255,255,0.22)';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(42, 42, W - 84, H - 84);
+
+  ctx.fillStyle = '#fde68a';
+  ctx.font = '700 24px -apple-system, BlinkMacSystemFont, "Noto Sans KR", sans-serif';
+  ctx.fillText(`SOMSSI INCHEON & K-CULTURE GUIDE · SECTION 0${secIdx + 1}`, 84, 115);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '800 46px -apple-system, BlinkMacSystemFont, "Noto Sans KR", sans-serif';
+  const afterTitleY = drawWrappedText(ctx, bannerInfo.h2 || bannerInfo.bannerTitleKr, 84, 190, W - 168, 62, 2);
+
+  ctx.fillStyle = '#e2e8f0';
+  ctx.font = '500 28px -apple-system, BlinkMacSystemFont, sans-serif';
+  drawWrappedText(ctx, bannerInfo.bannerSubtitleEn || '', 84, afterTitleY + 14, W - 168, 40, 2);
+
+  // Infographic pill badges at bottom
+  const badges =
+    secIdx === 2
+      ? ['1단계: 한복·전통 다과 (25분)', '2단계: 기초 주법 (30분)', '3단계: 아리랑 연주 (45분)', '4단계: 촬영 (20분)']
+      : secIdx === 3
+        ? ['송도 센트럴파크 인근 (공항 25분)', '120분 올인클루시브', '1인 99,000 KRW (부가세 포함)', 'KR / EN 진행']
+        : ['인천 송도 센트럴파크', '한국 전통 문화·예술', '가야금 & 한복 & 다과', '줄을 다루는 솜씨'];
+
+  let bx = 84;
+  const by = H - 135;
+  ctx.font = '600 22px -apple-system, BlinkMacSystemFont, "Noto Sans KR", sans-serif';
+  for (const bText of badges) {
+    const bw = ctx.measureText(bText).width + 36;
+    ctx.fillStyle = 'rgba(255,255,255,0.15)';
+    ctx.fillRect(bx, by, bw, 50);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(bText, bx + 18, by + 33);
+    bx += bw + 14;
+  }
+}
+
+function downloadCanvasAsPng(canvas, filename) {
+  if (!canvas) return;
+  const link = document.createElement('a');
+  link.download = filename;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
 }
 
 function selectTab(channelId) {
@@ -132,13 +342,71 @@ function setupViewModeButtons() {
   });
 }
 
+function renderWeeklyCalendarBar(weeklyPillars = []) {
+  state.weeklyPillars = weeklyPillars;
+  const grid = document.getElementById('weekly-days-grid');
+  if (!grid) return;
+
+  const shortNames = { 1: '월', 2: '화', 3: '수', 4: '목', 5: '금', 6: '토', 0: '일' };
+  const shortTopics = {
+    1: 'K-드라마',
+    2: '솜씨클래스',
+    3: '인천관광',
+    4: '인천미식',
+    5: '솜씨클래스',
+    6: '전통문화',
+    0: '큐레이션'
+  };
+
+  grid.innerHTML = weeklyPillars
+    .map((item) => {
+      const isSomssi = item.contentType === 'somssi_class';
+      const isActive = item.dayIndex === state.selectedDayIndex;
+      return `
+        <button
+          type="button"
+          class="day-pill-btn ${isSomssi ? 'somssi-day' : 'magazine-day'} ${isActive ? 'active' : ''}"
+          data-day-index="${item.dayIndex}"
+          title="${escapeHtml(item.title)}"
+        >
+          <strong>${shortNames[item.dayIndex]}</strong>
+          <span class="day-type-dot">${shortTopics[item.dayIndex]}</span>
+        </button>
+      `;
+    })
+    .join('');
+
+  grid.querySelectorAll('[data-day-index]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const dayIdx = Number(btn.dataset.dayIndex);
+      state.selectedDayIndex = dayIdx;
+      const found = state.weeklyPillars.find((w) => w.dayIndex === dayIdx);
+      if (found) {
+        document.getElementById('content-type-select').value = found.contentType;
+        const pillarSel = document.getElementById('pillar-select');
+        if ([...pillarSel.options].some((o) => o.value === found.pillar)) {
+          pillarSel.value = found.pillar;
+        }
+        // Match preset trend for that pillar
+        const matchingTrendIdx = state.trends.findIndex((t) => t.pillar === found.pillar);
+        if (matchingTrendIdx !== -1) {
+          document.getElementById('trend-preset-select').value = String(matchingTrendIdx);
+          applyTrendForm(state.trends[matchingTrendIdx]);
+        }
+        renderWeeklyCalendarBar(state.weeklyPillars);
+        await generateDraft();
+      }
+    });
+  });
+}
+
 function populateTrendSelect(trends) {
   state.trends = trends;
   const select = document.getElementById('trend-preset-select');
   select.innerHTML = trends
     .map(
       (t, idx) =>
-        `<option value="${idx}">[${t.language.toUpperCase()}] ${escapeHtml(t.title.slice(0, 58))}</option>`
+        `<option value="${idx}">[${t.contentType === 'culture_magazine' ? '문화매거진' : '정기클래스'} · ${t.language.toUpperCase()}] ${escapeHtml(t.title.slice(0, 50))}</option>`
     )
     .join('');
   applyTrendForm(trends[0]);
@@ -150,6 +418,15 @@ function applyTrendForm(trend) {
   document.getElementById('trend-summary').value = trend.summary || '';
   document.getElementById('trend-source').value = trend.source || '';
   document.getElementById('trend-lang').value = trend.language || 'en';
+  if (trend.contentType) {
+    document.getElementById('content-type-select').value = trend.contentType;
+  }
+  if (trend.pillar) {
+    const pillarSel = document.getElementById('pillar-select');
+    if ([...pillarSel.options].some((o) => o.value === trend.pillar)) {
+      pillarSel.value = trend.pillar;
+    }
+  }
 }
 
 function renderSidebarStatus() {
@@ -159,11 +436,16 @@ function renderSidebarStatus() {
 
   document.getElementById('fit-score-val').textContent = `${out.trend_fit.score} / 10`;
   const skipBadge = document.getElementById('fit-skip-badge');
+  const isMagazine = state.extras?.contentType === 'culture_magazine';
+
   if (out.trend_fit.skip) {
     skipBadge.textContent = 'SKIP → Evergreen 전환';
     skipBadge.className = 'status-pill warn';
+  } else if (isMagazine) {
+    skipBadge.textContent = '주 5회 문화·관광 매거진 모드';
+    skipBadge.className = 'status-pill ok';
   } else {
-    skipBadge.textContent = 'TREND 채택 (Score ≥ 5)';
+    skipBadge.textContent = '주 2회 《줄을 다루는 솜씨》 정기 홍보';
     skipBadge.className = 'status-pill ok';
   }
   document.getElementById('fit-angle-text').textContent = out.trend_fit.angle;
@@ -207,7 +489,6 @@ function renderReelsChannel(r) {
   const panel = document.getElementById('panel-reels');
   panel.innerHTML = `
     <div class="channel-split-layout">
-      <!-- Live Reels / TikTok Phone Mockup -->
       <div class="preview-pane">
         <div class="preview-frame-title">
           <span>📱 Reels / TikTok 15s Live Preview</span>
@@ -265,7 +546,6 @@ function renderReelsChannel(r) {
         </div>
       </div>
 
-      <!-- Specs Pane -->
       <div class="specs-pane channel-grid">
         <div class="channel-box">
           <h3>First 2s Hook (≤ 40 chars) <span class="char-badge">EN ${r.hook.en.length}/40 · KR ${r.hook.kr.length}/40</span></h3>
@@ -276,7 +556,10 @@ function renderReelsChannel(r) {
           <h3>On-Screen Text (3–4 lines, ≤ 30 chars each) <span class="char-badge">${r.onscreen_text.length} lines</span></h3>
           <ol>
             ${r.onscreen_text
-              .map((line, idx) => `<li><strong>[${timeRanges[idx] || ''}]</strong> ${escapeHtml(line)} <small>(${line.length}/30)</small></li>`)
+              .map(
+                (line, idx) =>
+                  `<li><strong>[${timeRanges[idx] || ''}]</strong> ${escapeHtml(line)} <small>(${line.length}/30)</small></li>`
+              )
               .join('')}
           </ol>
         </div>
@@ -325,14 +608,15 @@ function renderInstagramChannel(ig) {
   const cardRoles = [
     'CARD 1 · COVER HOOK',
     'CARD 2 · CONTEXT & TREND',
-    'CARD 3 · 120-MIN EXPERIENCE',
-    'CARD 4 · PRICE & BOOKING CTA'
+    'CARD 3 · EXPERIENCE & STORY',
+    'CARD 4 · GUIDE & BOOKING CTA'
   ];
+  const cardStudioMeta = state.extras?.imageStudio?.instagramCards?.[slideIdx] || {};
 
   const panel = document.getElementById('panel-instagram_feed');
   panel.innerHTML = `
     <div class="channel-split-layout">
-      <!-- Live Instagram Feed Carousel Mockup -->
+      <!-- Live Instagram Feed Carousel Mockup + Canvas Image Studio -->
       <div class="preview-pane">
         <div class="preview-frame-title">
           <span>📸 Instagram 4-Card Carousel Preview</span>
@@ -350,16 +634,9 @@ function renderInstagramChannel(ig) {
             <span>•••</span>
           </div>
 
-          <div class="ig-square-stage" data-slide="${slideIdx}">
-            <div class="ig-slide-counter">${slideIdx + 1}/${cards.length}</div>
-            <div class="ig-slide-content">
-              <div class="ig-slide-role">${cardRoles[slideIdx] || `CARD ${slideIdx + 1}`}</div>
-              <h4 class="ig-slide-title-kr">${escapeHtml(currentCard.title.kr)}</h4>
-              <p class="ig-slide-title-en">${escapeHtml(currentCard.title.en)}</p>
-              <p class="ig-slide-body-kr">${escapeHtml(currentCard.body.kr)}</p>
-              <p class="ig-slide-body-en">${escapeHtml(currentCard.body.en)}</p>
-            </div>
-            <div class="ig-carousel-nav">
+          <div class="ig-square-stage" data-slide="${slideIdx}" style="padding:14px;">
+            <canvas id="ig-live-canvas" class="studio-canvas" style="max-width:100%;"></canvas>
+            <div class="ig-carousel-nav" style="margin-top:8px;">
               <button type="button" class="ig-nav-btn" id="ig-prev-btn" aria-label="이전 카드">‹</button>
               <div class="ig-dots">
                 ${cards
@@ -384,6 +661,32 @@ function renderInstagramChannel(ig) {
             <div class="ig-caption-tags">${ig.hashtags.map((t) => escapeHtml(t)).join(' ')}</div>
           </div>
         </div>
+
+        <!-- Instagram Image Studio Box -->
+        <div class="studio-card">
+          <div class="studio-header">
+            <strong>🎨 인스타 카드뉴스 PNG 이미지 제작 스튜디오 (1080×1080)</strong>
+          </div>
+          <div class="studio-actions">
+            <button type="button" id="dl-current-ig-png" class="btn btn-primary btn-sm">
+              ⬇ 현재 카드(${slideIdx + 1}번) PNG 저장
+            </button>
+            <button type="button" id="dl-all-ig-png" class="btn btn-accent btn-sm">
+              ⬇ 4장 전체 PNG 일괄 저장
+            </button>
+            <label class="btn btn-secondary btn-sm" style="margin:0;">
+              📷 내 배경사진 합성 (현재 슬라이드)
+              <input type="file" id="ig-bg-upload" accept="image/*" style="display:none;" />
+            </label>
+          </div>
+          <div class="prompt-guide-box">
+            <div><strong>📸 ${escapeHtml(cardStudioMeta.photoGuide || '')}</strong></div>
+            <div style="margin-top:4px;color:var(--text-muted);">
+              <strong>구독 AI 이미지 프롬프트:</strong> ${escapeHtml(cardStudioMeta.aiPrompt || '')}
+              <button type="button" id="copy-ig-ai-prompt" class="btn btn-ghost btn-sm">프롬프트 복사</button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Specs Pane -->
@@ -392,7 +695,7 @@ function renderInstagramChannel(ig) {
           ${cards
             .map(
               (c, i) => `
-            <div class="ig-card" style="${i === slideIdx ? 'border-color: var(--primary); box-shadow: 0 0 0 2px rgba(124,63,44,0.15);' : ''}">
+            <div class="ig-card" data-ig-card-box="${i}" style="cursor:pointer;${i === slideIdx ? 'border-color: var(--primary); box-shadow: 0 0 0 2px rgba(124,63,44,0.15);' : ''}">
               <div class="ig-card-num">${cardRoles[i] || `Card ${i + 1}`}</div>
               <h4>${escapeHtml(c.title.kr)} <small>(${c.title.kr.length}/20)</small></h4>
               <p class="subtitle">${escapeHtml(c.title.en)} <small>(${c.title.en.length}/20)</small></p>
@@ -416,6 +719,9 @@ function renderInstagramChannel(ig) {
     </div>
   `;
 
+  const liveCanvas = panel.querySelector('#ig-live-canvas');
+  renderIgCardToCanvas(liveCanvas, currentCard, slideIdx, cards.length);
+
   panel.querySelector('#ig-prev-btn')?.addEventListener('click', () => {
     state.igSlideIdx = (slideIdx - 1 + cards.length) % cards.length;
     renderInstagramChannel(getActiveData().instagram_feed);
@@ -424,11 +730,44 @@ function renderInstagramChannel(ig) {
     state.igSlideIdx = (slideIdx + 1) % cards.length;
     renderInstagramChannel(getActiveData().instagram_feed);
   });
-  panel.querySelectorAll('[data-ig-dot]').forEach((dot) => {
-    dot.addEventListener('click', () => {
-      state.igSlideIdx = Number(dot.dataset.igDot);
+  panel.querySelectorAll('[data-ig-dot], [data-ig-card-box]').forEach((el) => {
+    el.addEventListener('click', () => {
+      const idx = Number(el.dataset.igDot ?? el.dataset.igCardBox);
+      state.igSlideIdx = idx;
       renderInstagramChannel(getActiveData().instagram_feed);
     });
+  });
+
+  panel.querySelector('#dl-current-ig-png')?.addEventListener('click', () => {
+    downloadCanvasAsPng(liveCanvas, `somssi_instagram_card_${slideIdx + 1}.png`);
+  });
+
+  panel.querySelector('#dl-all-ig-png')?.addEventListener('click', () => {
+    const tempCanvas = document.createElement('canvas');
+    cards.forEach((cardItem, idx) => {
+      renderIgCardToCanvas(tempCanvas, cardItem, idx, cards.length);
+      downloadCanvasAsPng(tempCanvas, `somssi_instagram_card_${idx + 1}.png`);
+    });
+  });
+
+  panel.querySelector('#ig-bg-upload')?.addEventListener('change', (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        state.igCustomBgImages[slideIdx] = img;
+        renderInstagramChannel(getActiveData().instagram_feed);
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  panel.querySelector('#copy-ig-ai-prompt')?.addEventListener('click', async () => {
+    await navigator.clipboard.writeText(cardStudioMeta.aiPrompt || '');
+    alert('현재 카드의 AI 이미지 생성 프롬프트가 복사되었습니다.');
   });
 }
 
@@ -442,7 +781,6 @@ function renderThreadsChannel(th) {
   const panel = document.getElementById('panel-threads');
   panel.innerHTML = `
     <div class="channel-split-layout">
-      <!-- Live Threads Post Mockup -->
       <div class="preview-pane">
         <div class="preview-frame-title">
           <span>🧵 Threads Conversational Post Preview</span>
@@ -461,7 +799,7 @@ function renderThreadsChannel(th) {
               </div>
               <div class="threads-body">${escapeHtml(rawText)}</div>
               <div class="threads-link-card">
-                <div class="threads-link-domain">SOMSSI · 120-Min Gayageum &amp; Hanbok Class</div>
+                <div class="threads-link-domain">SOMSSI · Songdo Incheon Cultural Guide &amp; Class</div>
                 <div class="threads-link-title">🔗 ${escapeHtml(bookingLinkText)}</div>
               </div>
               <div class="threads-actions">
@@ -475,7 +813,6 @@ function renderThreadsChannel(th) {
         </div>
       </div>
 
-      <!-- Specs Pane -->
       <div class="specs-pane channel-grid">
         <div class="channel-box">
           <h3>Threads Conversational Post (≤ 450 chars) <span class="char-badge">${rawText.length} / 450 chars</span></h3>
@@ -486,7 +823,7 @@ function renderThreadsChannel(th) {
           <ul class="compact-list">
             <li>오픈 질문형 마무리(<code>?</code>): <strong>${endsWithQ ? '충족 (✓)' : '미충족 (✕)'}</strong></li>
             <li>해시태그 블록 금지 (최대 1개): <strong>${(rawText.match(/#[\w가-힣]+/g) || []).length} / 1개</strong></li>
-            <li>한국어 자연스러운 표현 포함 (가야금 / 《줄을 다루는 솜씨》): <strong>포함됨</strong></li>
+            <li>한국어 자연스러운 표현 포함: <strong>포함됨</strong></li>
           </ul>
         </div>
       </div>
@@ -496,42 +833,97 @@ function renderThreadsChannel(th) {
 
 function renderNaverBlogChannel(nb) {
   const totalBodyChars = (nb.sections || []).reduce((acc, s) => acc + (s.body || '').length, 0);
+  const bilingualMeta = state.extras?.blogBilingual || {};
+  const blogBanners = state.extras?.imageStudio?.blogBanners || [];
   const panel = document.getElementById('panel-naver_blog');
+
+  const displayTitle =
+    state.blogLangMode === 'en_full'
+      ? bilingualMeta.enTitle || nb.title
+      : nb.title;
+
+  let articleSectionsHtml = '';
+  if (state.blogLangMode === 'en_full') {
+    articleSectionsHtml = (bilingualMeta.enSections || [])
+      .map(
+        (sec, idx) => `
+        <section class="naver-section-block">
+          <h4 class="naver-h2">${escapeHtml(sec.h2)}</h4>
+          <canvas id="blog-canvas-${idx}" class="blog-banner-canvas"></canvas>
+          ${formatNaverBodyHtml(sec.body, [], false)}
+        </section>
+      `
+      )
+      .join('');
+  } else if (state.blogLangMode === 'bilingual_stacked') {
+    articleSectionsHtml = (bilingualMeta.bilingualSections || nb.sections || [])
+      .map(
+        (sec, idx) => `
+        <section class="naver-section-block">
+          <h4 class="naver-h2">${escapeHtml(sec.h2_kr || sec.h2)}</h4>
+          <canvas id="blog-canvas-${idx}" class="blog-banner-canvas"></canvas>
+          ${formatNaverBodyHtml(sec.body_kr || sec.body, nb.keywords, state.highlightBlogKeywords)}
+          <div class="bilingual-en-sub">
+            <strong>[EN] ${escapeHtml(sec.h2_en || '')}</strong>
+            ${formatNaverBodyHtml(sec.body_en || '', [], false)}
+          </div>
+        </section>
+      `
+      )
+      .join('');
+  } else {
+    articleSectionsHtml = (nb.sections || [])
+      .map(
+        (sec, idx) => `
+        <section class="naver-section-block">
+          <h4 class="naver-h2">${escapeHtml(sec.h2)}</h4>
+          <canvas id="blog-canvas-${idx}" class="blog-banner-canvas"></canvas>
+          ${formatNaverBodyHtml(sec.body, nb.keywords, state.highlightBlogKeywords)}
+        </section>
+      `
+      )
+      .join('');
+  }
 
   panel.innerHTML = `
     <div class="channel-split-layout blog-layout">
       <!-- Live Naver Blog SmartEditor ONE Mockup -->
       <div class="preview-pane">
-        <div class="preview-frame-title">
-          <span>🟢 Naver Blog SmartEditor ONE 미리보기</span>
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;text-transform:none;">
-            <input type="checkbox" id="blog-kw-highlight-toggle" ${state.highlightBlogKeywords ? 'checked' : ''} />
-            <span>검색 키워드 본문 위치 하이라이트</span>
-          </label>
+        <div class="preview-frame-title" style="flex-wrap:wrap;gap:8px;">
+          <div class="blog-lang-tabs" role="group" aria-label="블로그 언어 구성 선택">
+            <button type="button" class="blog-lang-btn ${state.blogLangMode === 'kr_summary' ? 'active' : ''}" data-blog-lang="kr_summary">
+              🇰🇷 국문 + 하단 영문요약 (네이버 SEO 추천)
+            </button>
+            <button type="button" class="blog-lang-btn ${state.blogLangMode === 'en_full' ? 'active' : ''}" data-blog-lang="en_full">
+              🇺🇸 영문 전문 (Full EN · 외국인/구글용)
+            </button>
+            <button type="button" class="blog-lang-btn ${state.blogLangMode === 'bilingual_stacked' ? 'active' : ''}" data-blog-lang="bilingual_stacked">
+              🇰🇷+🇺🇸 문단별 한·영 병기
+            </button>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <label style="display:flex;align-items:center;gap:4px;cursor:pointer;text-transform:none;">
+              <input type="checkbox" id="blog-kw-highlight-toggle" ${state.highlightBlogKeywords ? 'checked' : ''} />
+              <span>키워드 하이라이트</span>
+            </label>
+            <button type="button" id="copy-blog-mode-btn" class="btn btn-secondary btn-sm">📋 현재 모드 원고 복사</button>
+          </div>
         </div>
+
         <div class="naver-blog-mockup">
           <div class="naver-top-strip">
             <span>NAVER BLOG · 솜씨(SOMSSI) 공식 블로그</span>
-            <span>전체공개 · B2B/국문</span>
+            <span>${state.blogLangMode === 'en_full' ? 'Full English Guide' : state.blogLangMode === 'bilingual_stacked' ? '한·영 문단 병기' : '국문 + 하단 영문 요약'}</span>
           </div>
           <article class="naver-article">
-            <div class="naver-category">송도 가볼만한곳 · 외국인 한국문화체험</div>
-            <h3 class="naver-title">${escapeHtml(nb.title)}</h3>
+            <div class="naver-category">인천·송도 로컬 문화예술 · 줄을 다루는 솜씨</div>
+            <h3 class="naver-title">${escapeHtml(displayTitle)}</h3>
             <div class="naver-author-row">
               <span>솜씨(SOMSSI) 송도 가야금 스튜디오 · 방금 전</span>
-              <span>본문 ${totalBodyChars.toLocaleString()}자 (권장 1,500–2,500자)</span>
+              <span>국문 본문 ${totalBodyChars.toLocaleString()}자 (권장 1,500–2,500자)</span>
             </div>
 
-            ${(nb.sections || [])
-              .map(
-                (sec) => `
-              <section class="naver-section-block">
-                <h4 class="naver-h2">${escapeHtml(sec.h2)}</h4>
-                ${formatNaverBodyHtml(sec.body, nb.keywords, state.highlightBlogKeywords)}
-              </section>
-            `
-              )
-              .join('')}
+            ${articleSectionsHtml}
 
             <div class="naver-en-box">
               <strong>🌐 English Summary (For Foreign Guests &amp; Hotel Concierges)</strong>
@@ -547,36 +939,120 @@ function renderNaverBlogChannel(nb) {
         </div>
       </div>
 
-      <!-- Specs Pane -->
+      <!-- Specs & Blog Image Studio Pane -->
       <div class="specs-pane channel-grid">
+        <div class="channel-box">
+          <div class="studio-header">
+            <h3 style="margin:0;">🖼 네이버 블로그 섹션별 인포그래픽·배너 이미지 스튜디오</h3>
+            <button type="button" id="dl-all-blog-png" class="btn btn-primary btn-sm">
+              ⬇ 블로그 이미지 4장 일괄 저장
+            </button>
+          </div>
+          <p class="subtitle">각 섹션 본문 상단에 삽입된 인포그래픽 이미지를 PNG로 저장하거나 실제 매장 사진을 합성할 수 있습니다.</p>
+          ${blogBanners
+            .map(
+              (b, idx) => `
+            <div class="prompt-guide-box" style="margin-top:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap;">
+                <strong>섹션 ${idx + 1}: ${escapeHtml(b.h2)}</strong>
+                <div style="display:flex;gap:6px;">
+                  <label class="btn btn-secondary btn-sm" style="margin:0;">
+                    📷 사진 합성
+                    <input type="file" data-blog-bg-upload="${idx}" accept="image/*" style="display:none;" />
+                  </label>
+                  <button type="button" class="btn btn-ghost btn-sm" data-dl-blog-canvas="${idx}">PNG 저장</button>
+                </div>
+              </div>
+              <div style="margin-top:4px;">${escapeHtml(b.photoGuide)}</div>
+              <div style="color:var(--text-muted);margin-top:2px;">
+                <strong>SEO alt 태그:</strong> <code>${escapeHtml(b.altText)}</code>
+              </div>
+            </div>
+          `
+            )
+            .join('')}
+        </div>
+
         <div class="channel-box">
           <h3>Blog Title (≤ 40 chars) <span class="char-badge">${nb.title.length} / 40 chars</span></h3>
           <p style="font-size: 1.05rem; font-weight: 700">${escapeHtml(nb.title)}</p>
         </div>
         <div class="channel-box">
-          <h3>Body Length &amp; Sections <span class="char-badge">${nb.sections.length} sections · ${totalBodyChars} chars</span></h3>
-          <p class="subtitle">권장 분량: 한국어 기준 1,500–2,500자 (현재 ${totalBodyChars}자)</p>
-          <ul class="compact-list">
-            ${nb.sections
-              .map((s, idx) => `<li><strong>섹션 ${idx + 1}:</strong> ${escapeHtml(s.h2)} (${s.body.length}자)</li>`)
-              .join('')}
-          </ul>
-        </div>
-        <div class="channel-box">
           <h3>Search Keywords (5–8) <span class="char-badge">${nb.keywords.length} keywords</span></h3>
           <div class="tag-cloud">${nb.keywords.map((k) => `<span class="tag">${escapeHtml(k)}</span>`).join('')}</div>
-        </div>
-        <div class="channel-box">
-          <h3>English Summary (3–4 sentences)</h3>
-          <p style="font-size: 0.86rem">${escapeHtml(nb.en_summary)}</p>
         </div>
       </div>
     </div>
   `;
 
+  // Render each section canvas
+  blogBanners.forEach((b, idx) => {
+    const c = panel.querySelector(`#blog-canvas-${idx}`);
+    if (c) renderBlogSectionCanvas(c, b, idx);
+  });
+
+  panel.querySelectorAll('[data-blog-lang]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      state.blogLangMode = btn.dataset.blogLang;
+      renderNaverBlogChannel(getActiveData().naver_blog);
+    });
+  });
+
   panel.querySelector('#blog-kw-highlight-toggle')?.addEventListener('change', (e) => {
     state.highlightBlogKeywords = e.target.checked;
     renderNaverBlogChannel(getActiveData().naver_blog);
+  });
+
+  panel.querySelectorAll('[data-dl-blog-canvas]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const idx = Number(btn.dataset.dlBlogCanvas);
+      const c = panel.querySelector(`#blog-canvas-${idx}`);
+      downloadCanvasAsPng(c, `somssi_naver_blog_section_${idx + 1}.png`);
+    });
+  });
+
+  panel.querySelector('#dl-all-blog-png')?.addEventListener('click', () => {
+    blogBanners.forEach((_, idx) => {
+      const c = panel.querySelector(`#blog-canvas-${idx}`);
+      if (c) downloadCanvasAsPng(c, `somssi_naver_blog_section_${idx + 1}.png`);
+    });
+  });
+
+  panel.querySelectorAll('[data-blog-bg-upload]').forEach((inp) => {
+    inp.addEventListener('change', (e) => {
+      const idx = Number(inp.dataset.blogBgUpload);
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new Image();
+        img.onload = () => {
+          state.blogCustomBgImages[idx] = img;
+          renderNaverBlogChannel(getActiveData().naver_blog);
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  });
+
+  panel.querySelector('#copy-blog-mode-btn')?.addEventListener('click', async () => {
+    let copyText = '';
+    if (state.blogLangMode === 'en_full') {
+      copyText = `${bilingualMeta.enTitle}\n\n` +
+        (bilingualMeta.enSections || []).map((s) => `## ${s.h2}\n${s.body}`).join('\n\n');
+    } else if (state.blogLangMode === 'bilingual_stacked') {
+      copyText = `${nb.title} / ${bilingualMeta.enTitle}\n\n` +
+        (bilingualMeta.bilingualSections || [])
+          .map((s) => `## ${s.h2_kr}\n${s.body_kr}\n\n[EN] ${s.h2_en}\n${s.body_en}`)
+          .join('\n\n');
+    } else {
+      copyText = `${nb.title}\n\n` +
+        (nb.sections || []).map((s) => `## ${s.h2}\n${s.body}`).join('\n\n') +
+        `\n\n[English Summary]\n${nb.en_summary}`;
+    }
+    await navigator.clipboard.writeText(copyText);
+    alert('현재 선택된 블로그 언어 모드의 전체 원고가 복사되었습니다.');
   });
 }
 
@@ -589,7 +1065,6 @@ function renderChannels() {
   renderThreadsChannel(data.threads);
   renderNaverBlogChannel(data.naver_blog);
 
-  // 5. Raw JSON
   document.getElementById('panel-raw_json').innerHTML = `
     <pre class="code-block">${escapeHtml(JSON.stringify(data, null, 2))}</pre>
   `;
@@ -599,7 +1074,11 @@ function buildCurrentGeneratePayload() {
   return {
     mode: 'generate',
     date: document.getElementById('trend-date').value,
+    contentType: document.getElementById('content-type-select').value,
+    pillar: document.getElementById('pillar-select').value,
     trend: {
+      contentType: document.getElementById('content-type-select').value,
+      pillar: document.getElementById('pillar-select').value,
       title: document.getElementById('trend-title').value,
       summary: document.getElementById('trend-summary').value,
       source: document.getElementById('trend-source').value,
@@ -647,6 +1126,7 @@ async function generateDraft() {
     state.currentOutput = data.output;
     state.publishedPreview = data.publishedPreview;
     state.validation = data.validation;
+    state.extras = data.extras;
     state.lastPromptBundle = data.promptBundle;
     state.reelsSceneIdx = 0;
     state.igSlideIdx = 0;
@@ -672,6 +1152,8 @@ async function reviseDraft() {
     mode: 'revise',
     channel: state.activeChannel,
     instruction,
+    contentType: document.getElementById('content-type-select').value,
+    pillar: document.getElementById('pillar-select').value,
     previous_output: state.currentOutput
   };
 
@@ -696,6 +1178,7 @@ async function reviseDraft() {
     state.currentOutput = data.output;
     state.publishedPreview = data.publishedPreview;
     state.validation = data.validation;
+    state.extras = data.extras;
     state.lastPromptBundle = data.promptBundle;
     document.getElementById('engine-badge').textContent = `구독 모드: ${data.engineUsed}`;
     renderSidebarStatus();
@@ -731,16 +1214,35 @@ async function init() {
   const cfgRes = await fetch('/api/config');
   state.config = await cfgRes.json();
   populateTrendSelect(state.config.presets || []);
+  renderWeeklyCalendarBar(state.config.weeklyPillars || []);
 
   document.getElementById('trend-preset-select').addEventListener('change', (e) => {
     const t = state.trends[Number(e.target.value)];
     applyTrendForm(t);
   });
 
+  document.getElementById('content-type-select').addEventListener('change', (e) => {
+    const mode = e.target.value;
+    const pillarSel = document.getElementById('pillar-select');
+    if (mode === 'somssi_class') {
+      pillarSel.value = 'somssi_class';
+    } else if (pillarSel.value === 'somssi_class') {
+      pillarSel.value = 'incheon_tourism';
+    }
+  });
+
+  document.getElementById('pillar-select').addEventListener('change', (e) => {
+    const pillar = e.target.value;
+    document.getElementById('content-type-select').value =
+      pillar === 'somssi_class' ? 'somssi_class' : 'culture_magazine';
+  });
+
   document.getElementById('fetch-live-btn').addEventListener('click', async () => {
     const btn = document.getElementById('fetch-live-btn');
     btn.textContent = '불러오는 중...';
-    const res = await fetch('/api/trends?live=1');
+    const currentDay = state.weeklyPillars.find((w) => w.dayIndex === state.selectedDayIndex);
+    const q = currentDay?.rssQuery || 'Korea traditional culture travel Incheon';
+    const res = await fetch(`/api/trends?live=1&q=${encodeURIComponent(q)}`);
     const data = await res.json();
     populateTrendSelect(data.trends || []);
     btn.textContent = '실시간 RSS 불러오기';
@@ -754,7 +1256,6 @@ async function init() {
     renderChannels();
   });
 
-  // Web Subscription Bridge Modal
   document.getElementById('open-sub-bridge-btn').addEventListener('click', async () => {
     await openSubscriptionBridgeModal(buildCurrentGeneratePayload());
   });
@@ -783,6 +1284,8 @@ async function init() {
         rawText,
         mode: bridgeInput.mode,
         channel: bridgeInput.channel,
+        contentType: bridgeInput.contentType,
+        pillar: bridgeInput.pillar,
         previous_output: bridgeInput.previous_output,
         serviceName: 'ChatGPT/Claude/Gemini Web'
       })
@@ -795,13 +1298,13 @@ async function init() {
     state.currentOutput = data.output;
     state.publishedPreview = data.publishedPreview;
     state.validation = data.validation;
+    state.extras = data.extras;
     document.getElementById('engine-badge').textContent = `구독 모드: ${data.engineUsed}`;
     renderSidebarStatus();
     renderChannels();
     document.getElementById('sub-bridge-dialog').close();
   });
 
-  // Ground Truth Modal
   const gtDialog = document.getElementById('gt-dialog');
   document.getElementById('open-gt-btn').addEventListener('click', () => {
     renderGroundTruthDialog();
@@ -827,7 +1330,6 @@ async function init() {
     gtDialog.close();
   });
 
-  // Publish Modal
   const pubDialog = document.getElementById('publish-dialog');
   document.getElementById('open-publish-btn').addEventListener('click', () => {
     if (!state.publishedPreview) return;
@@ -865,25 +1367,22 @@ async function init() {
     pubDialog.close();
   });
 
-  // Generate initial sample draft automatically on load
-  const savedOutput = state.currentOutput;
-  if (!savedOutput) {
-    const res = await fetch('/api/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        ...buildCurrentGeneratePayload(),
-        provider: 'local-rule-engine'
-      })
-    });
-    const data = await res.json();
-    state.currentOutput = data.output;
-    state.publishedPreview = data.publishedPreview;
-    state.validation = data.validation;
-    document.getElementById('engine-badge').textContent = `구독 모드: ${data.engineUsed}`;
-    renderSidebarStatus();
-    renderChannels();
-  }
+  const res = await fetch('/api/generate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      ...buildCurrentGeneratePayload(),
+      provider: 'local-rule-engine'
+    })
+  });
+  const data = await res.json();
+  state.currentOutput = data.output;
+  state.publishedPreview = data.publishedPreview;
+  state.validation = data.validation;
+  state.extras = data.extras;
+  document.getElementById('engine-badge').textContent = `구독 모드: ${data.engineUsed}`;
+  renderSidebarStatus();
+  renderChannels();
 }
 
 init();

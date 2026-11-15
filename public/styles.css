@@ -1159,3 +1159,157 @@ textarea {
   font-size: 0.76rem;
   font-weight: 600;
 }
+
+/* --- Weekly 7-Day Content Pillar Bar --- */
+.weekly-pillar-box {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 12px;
+}
+
+.weekly-pillar-header {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.weekly-days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.day-pill-btn {
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 7px;
+  padding: 5px 2px;
+  font-size: 0.68rem;
+  line-height: 1.2;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  color: var(--text);
+}
+
+.day-pill-btn .day-type-dot {
+  font-size: 0.62rem;
+  padding: 1px 4px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.day-pill-btn.somssi-day .day-type-dot {
+  background: #fde8e1;
+  color: var(--primary);
+}
+
+.day-pill-btn.magazine-day .day-type-dot {
+  background: var(--accent-light);
+  color: var(--accent);
+}
+
+.day-pill-btn.active {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(124, 63, 44, 0.2);
+  font-weight: 700;
+}
+
+/* --- Image Studio & Bilingual Blog Controls --- */
+.studio-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  margin-top: 12px;
+}
+
+.studio-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.studio-canvas-wrap {
+  display: flex;
+  justify-content: center;
+  background: #18181b;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.studio-canvas {
+  width: 100%;
+  max-width: 340px;
+  aspect-ratio: 1 / 1;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+.blog-banner-canvas {
+  width: 100%;
+  aspect-ratio: 1200 / 630;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  margin: 8px 0 12px;
+  display: block;
+}
+
+.studio-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.prompt-guide-box {
+  background: var(--surface-alt);
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.78rem;
+  margin-top: 8px;
+}
+
+.blog-lang-tabs {
+  display: inline-flex;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.blog-lang-btn {
+  border: none;
+  background: transparent;
+  padding: 5px 10px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.blog-lang-btn.active {
+  background: #03c75a;
+  color: #fff;
+}
+
+.bilingual-en-sub {
+  background: #f8fafc;
+  border-left: 3px solid #64748b;
+  padding: 8px 12px;
+  margin: 6px 0 14px;
+  font-size: 0.84rem;
+  color: #334155;
+  border-radius: 0 6px 6px 0;
+}
