@@ -825,10 +825,13 @@ function renderThreadsChannel(th) {
       <div class="preview-pane">
         <div class="preview-frame-title">
           <span>🧵 Threads Conversational Post Preview</span>
-          <div style="display:flex;gap:6px;align-items:center;">
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
             <span>${rawText.length} / 450 chars</span>
-            <button type="button" id="copy-threads-text-btn" class="btn btn-primary btn-sm">
-              📋 스레드 본문 복사
+            <button type="button" id="copy-threads-text-btn" class="btn btn-secondary btn-sm">
+              📋 본문 복사
+            </button>
+            <button type="button" id="open-threads-intent-btn" class="btn btn-primary btn-sm">
+              🚀 스레드에 자동 입력 후 열기 ↗
             </button>
           </div>
         </div>
@@ -880,6 +883,10 @@ function renderThreadsChannel(th) {
     const pubTh = (state.publishedPreview || getActiveData()).threads;
     await navigator.clipboard.writeText(pubTh.text || '');
     alert('스레드(Threads) 게시물 본문이(UTM 링크 치환 포함) 클립보드에 복사되었습니다!');
+  });
+
+  panel.querySelector('#open-threads-intent-btn')?.addEventListener('click', async () => {
+    await launchThreadsDirect();
   });
 }
 
@@ -953,12 +960,15 @@ function renderNaverBlogChannel(nb) {
               🇰🇷+🇺🇸 문단별 한·영 병기
             </button>
           </div>
-          <div style="display:flex;gap:8px;align-items:center;">
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
             <label style="display:flex;align-items:center;gap:4px;cursor:pointer;text-transform:none;">
               <input type="checkbox" id="blog-kw-highlight-toggle" ${state.highlightBlogKeywords ? 'checked' : ''} />
               <span>키워드 하이라이트</span>
             </label>
-            <button type="button" id="copy-blog-mode-btn" class="btn btn-secondary btn-sm">📋 현재 모드 원고 복사</button>
+            <button type="button" id="copy-blog-mode-btn" class="btn btn-secondary btn-sm">📋 텍스트만 복사</button>
+            <button type="button" id="open-naver-write-btn" class="btn btn-primary btn-sm" style="background:#03c75a;border-color:#03c75a;">
+              🟢 서식 복사 + 네이버 블로그 글쓰기 열기 ↗
+            </button>
           </div>
         </div>
 
@@ -1106,6 +1116,102 @@ function renderNaverBlogChannel(nb) {
     await navigator.clipboard.writeText(copyText);
     alert('현재 선택된 블로그 언어 모드의 전체 원고가 복사되었습니다.');
   });
+
+  panel.querySelector('#open-naver-write-btn')?.addEventListener('click', async () => {
+    await launchNaverBlogDirect();
+  });
+}
+
+async function launchThreadsDirect() {
+  const pubTh = state.publishedPreview?.threads || getActiveData()?.threads;
+  if (!pubTh) return;
+  await navigator.clipboard.writeText(pubTh.text);
+  const intentUrl = `https://www.threads.net/intent/post?text=${encodeURIComponent(pubTh.text)}`;
+  window.open(intentUrl, '_blank', 'noopener,noreferrer');
+}
+
+async function launchInstagramDirect() {
+  const pubIg = state.publishedPreview?.instagram_feed || getActiveData()?.instagram_feed;
+  if (!pubIg) return;
+  const igPanel = document.getElementById('panel-instagram_feed');
+  (pubIg.carousel || []).forEach((_, idx) => {
+    const c = igPanel?.querySelector(`#ig-canvas-${idx}`);
+    if (c) downloadCanvasAsPng(c, `somssi_ig_card_${idx + 1}.png`);
+  });
+  const fullText = `${pubIg.caption}\n\n${(pubIg.hashtags || []).join(' ')}`;
+  await navigator.clipboard.writeText(fullText);
+  window.open('https://www.instagram.com/', '_blank', 'noopener,noreferrer');
+  alert('인스타그램 카드뉴스 PNG 4장 다운로드 및 캡션+해시태그 복사가 완료되었습니다.\n새 탭으로 열린 인스타그램에서 [만들기(+)] 버튼을 눌러 사진을 올리고 붙여넣기(Cmd+V) 하세요!');
+}
+
+async function launchNaverBlogDirect() {
+  const nb = state.publishedPreview?.naver_blog || getActiveData()?.naver_blog;
+  if (!nb) return;
+  const bilingualMeta = state.extras?.naverBlogBilingual || {};
+
+  let htmlContent = '';
+  let plainContent = '';
+
+  if (state.blogLangMode === 'en_full') {
+    const title = bilingualMeta.enTitle || nb.title;
+    const sections = bilingualMeta.enSections || nb.sections || [];
+    htmlContent = `<h1>${escapeHtml(title)}</h1>` +
+      sections.map((s) => `<h2>${escapeHtml(s.h2)}</h2><p>${escapeHtml(s.body).replace(/\n/g, '<br/>')}</p>`).join('') +
+      `<p><strong>Tags:</strong> ${(nb.tags || []).map((t) => `#${escapeHtml(t)}`).join(' ')}</p>`;
+    plainContent = `${title}\n\n` +
+      sections.map((s) => `## ${s.h2}\n${s.body}`).join('\n\n') +
+      `\n\n${(nb.tags || []).map((t) => `#${t}`).join(' ')}`;
+  } else if (state.blogLangMode === 'bilingual_stacked') {
+    const title = `${nb.title} / ${bilingualMeta.enTitle || ''}`;
+    const sections = bilingualMeta.bilingualSections || [];
+    htmlContent = `<h1>${escapeHtml(title)}</h1>` +
+      sections.map((s) =>
+        `<h2>${escapeHtml(s.h2_kr)}</h2><p>${escapeHtml(s.body_kr).replace(/\n/g, '<br/>')}</p>` +
+        `<h3>[EN] ${escapeHtml(s.h2_en)}</h3><p>${escapeHtml(s.body_en).replace(/\n/g, '<br/>')}</p><hr/>`
+      ).join('') +
+      `<p><strong>Tags:</strong> ${(nb.tags || []).map((t) => `#${escapeHtml(t)}`).join(' ')}</p>`;
+    plainContent = `${title}\n\n` +
+      sections.map((s) => `## ${s.h2_kr}\n${s.body_kr}\n\n[EN] ${s.h2_en}\n${s.body_en}`).join('\n\n') +
+      `\n\n${(nb.tags || []).map((t) => `#${t}`).join(' ')}`;
+  } else {
+    const sections = nb.sections || [];
+    htmlContent = `<h1>${escapeHtml(nb.title)}</h1>` +
+      sections.map((s) => `<h2>${escapeHtml(s.h2)}</h2><p>${escapeHtml(s.body).replace(/\n/g, '<br/>')}</p>`).join('') +
+      `<hr/><h3>🌐 English Summary</h3><p>${escapeHtml(nb.en_summary).replace(/\n/g, '<br/>')}</p>` +
+      `<p><strong>Tags:</strong> ${(nb.tags || []).map((t) => `#${escapeHtml(t)}`).join(' ')}</p>`;
+    plainContent = `${nb.title}\n\n` +
+      sections.map((s) => `## ${s.h2}\n${s.body}`).join('\n\n') +
+      `\n\n[English Summary]\n${nb.en_summary}\n\n${(nb.tags || []).map((t) => `#${t}`).join(' ')}`;
+  }
+
+  try {
+    if (window.ClipboardItem) {
+      const htmlBlob = new Blob([htmlContent], { type: 'text/html' });
+      const textBlob = new Blob([plainContent], { type: 'text/plain' });
+      await navigator.clipboard.write([
+        new ClipboardItem({ 'text/html': htmlBlob, 'text/plain': textBlob })
+      ]);
+    } else {
+      await navigator.clipboard.writeText(plainContent);
+    }
+  } catch {
+    await navigator.clipboard.writeText(plainContent);
+  }
+
+  window.open('https://blog.naver.com/GoBlogWrite.naver', '_blank', 'noopener,noreferrer');
+  alert('네이버 스마트에디터 서식(H2 소제목·본문·영문 요약·태그)이 클립보드에 복사되었습니다.\n새 탭으로 열린 네이버 블로그 글쓰기 창에 그대로 붙여넣기(Cmd+V) 하세요!');
+}
+
+async function launchReelsDirect() {
+  const pubReels = state.publishedPreview?.reels || getActiveData()?.reels;
+  if (!pubReels) return;
+  const scriptAndCaption =
+    `[Reels Hook (0-3s)]\n${pubReels.hook}\n\n` +
+    `[On-Screen Subtitles (15s)]\n${(pubReels.onscreen_text || []).map((line, i) => `${i + 1}. ${line}`).join('\n')}\n\n` +
+    `[Caption & Hashtags]\n${pubReels.caption}\n\n${(pubReels.hashtags || []).join(' ')}`;
+  await navigator.clipboard.writeText(scriptAndCaption);
+  window.open('https://business.facebook.com/latest/composer', '_blank', 'noopener,noreferrer');
+  alert('릴스 대본 + 캡션 + 해시태그가 복사되었으며 Meta Business Suite가 새 탭에서 열렸습니다.');
 }
 
 function renderChannels() {
@@ -1483,6 +1589,33 @@ async function init() {
   });
 
   const pubDialog = document.getElementById('publish-dialog');
+  const savedWebhook = localStorage.getItem('somssi_webhook_url') || '';
+  if (savedWebhook && document.getElementById('publish-webhook-url')) {
+    document.getElementById('publish-webhook-url').value = savedWebhook;
+  }
+
+  document.getElementById('save-webhook-url-btn')?.addEventListener('click', () => {
+    const val = document.getElementById('publish-webhook-url').value.trim();
+    localStorage.setItem('somssi_webhook_url', val);
+    alert(val ? '웹훅 URL이 브라우저에 저장되었습니다.' : '저장된 웹훅 URL이 초기화되었습니다.');
+  });
+
+  document.getElementById('direct-threads-btn')?.addEventListener('click', async () => {
+    await launchThreadsDirect();
+  });
+
+  document.getElementById('direct-ig-btn')?.addEventListener('click', async () => {
+    await launchInstagramDirect();
+  });
+
+  document.getElementById('direct-naver-btn')?.addEventListener('click', async () => {
+    await launchNaverBlogDirect();
+  });
+
+  document.getElementById('direct-reels-btn')?.addEventListener('click', async () => {
+    await launchReelsDirect();
+  });
+
   document.getElementById('open-publish-btn').addEventListener('click', () => {
     if (!state.publishedPreview) return;
     document.getElementById('publish-preview-pre').textContent = JSON.stringify(
@@ -1500,6 +1633,9 @@ async function init() {
 
   document.getElementById('confirm-publish-btn').addEventListener('click', async () => {
     const webhookUrl = document.getElementById('publish-webhook-url').value.trim();
+    if (webhookUrl) {
+      localStorage.setItem('somssi_webhook_url', webhookUrl);
+    }
     const reviewer = document.getElementById('publish-reviewer').value.trim();
     const res = await fetch('/api/publish', {
       method: 'POST',
