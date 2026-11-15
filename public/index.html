@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SOMSSI Global Marketing Copilot v2</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-badge">줄을 다루는 솜씨</span>
+      <div>
+        <h1>SOMSSI Global Marketing Copilot <span class="v-tag">v2</span></h1>
+        <p class="subtitle">120-Min Gayageum &amp; Hanbok One-Day Class · Songdo, Incheon · 4-Channel Content Studio</p>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <span id="engine-badge" class="status-pill">Engine: Ready</span>
+      <button type="button" id="open-gt-btn" class="btn btn-secondary">Ground Truth &amp; Prompt 설정</button>
+      <button type="button" id="open-publish-btn" class="btn btn-primary">검수 승인 &amp; Make.com 배포</button>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <!-- Left Column: Input Trend, Fit Assessment & Self-Check -->
+    <aside class="sidebar">
+      <section class="card">
+        <div class="card-header">
+          <h2>1. Daily Trend Input</h2>
+          <button type="button" id="fetch-live-btn" class="btn btn-ghost btn-sm">실시간 RSS 불러오기</button>
+        </div>
+        <label class="field">
+          <span>프리셋 / 수집된 트렌드 선택</span>
+          <select id="trend-preset-select"></select>
+        </label>
+        <div class="field-row">
+          <label class="field">
+            <span>기준 일자 (Date)</span>
+            <input type="date" id="trend-date" />
+          </label>
+          <label class="field">
+            <span>언어 (Language)</span>
+            <select id="trend-lang">
+              <option value="en">en (English)</option>
+              <option value="ko">ko (Korean)</option>
+            </select>
+          </label>
+        </div>
+        <label class="field">
+          <span>트렌드 제목 (Title)</span>
+          <input type="text" id="trend-title" placeholder="트렌드 제목을 입력하세요" />
+        </label>
+        <label class="field">
+          <span>트렌드 요약 (Summary)</span>
+          <textarea id="trend-summary" rows="3" placeholder="트렌드 핵심 내용을 입력하세요"></textarea>
+        </label>
+        <label class="field">
+          <span>출처 (Source)</span>
+          <input type="text" id="trend-source" placeholder="출처 입력" />
+        </label>
+        <details class="llm-settings">
+          <summary>OpenAI API 설정 (선택 · 미입력 시 내장 Rule Engine 사용)</summary>
+          <div class="llm-fields">
+            <label class="field">
+              <span>OpenAI API Key</span>
+              <input type="password" id="openai-key" placeholder="sk-..." autocomplete="off" />
+            </label>
+            <label class="field">
+              <span>Model</span>
+              <input type="text" id="openai-model" value="gpt-4o-mini" />
+            </label>
+          </div>
+        </details>
+        <button type="button" id="generate-btn" class="btn btn-primary btn-block">
+          4개 채널 초안 생성 (Generate Mode)
+        </button>
+      </section>
+
+      <section class="card">
+        <h2>2. Trend Fit &amp; Angle</h2>
+        <div class="fit-meter">
+          <div class="fit-score-box">
+            <span class="fit-label">Fit Score</span>
+            <strong id="fit-score-val">- / 10</strong>
+          </div>
+          <span id="fit-skip-badge" class="status-pill">대기 중</span>
+        </div>
+        <p id="fit-angle-text" class="angle-text">트렌드를 선택하고 생성 버튼을 눌러주세요.</p>
+      </section>
+
+      <section class="card">
+        <h2>3. Section 9 Self-Check 검수</h2>
+        <ul id="checklist-ul" class="checklist"></ul>
+        <div id="validation-alerts"></div>
+      </section>
+
+      <section class="card">
+        <h2>4. Reviewer Notes &amp; Facts Used</h2>
+        <div class="sub-block">
+          <h3>Reviewer Notes</h3>
+          <ul id="reviewer-notes-list" class="compact-list"></ul>
+        </div>
+        <div class="sub-block">
+          <h3>Facts Used (Ground Truth / RAG)</h3>
+          <ul id="facts-used-list" class="compact-list"></ul>
+        </div>
+      </section>
+    </aside>
+
+    <!-- Right Column: 4-Channel Tabs + Revise Bar + Raw JSON -->
+    <section class="content-stage">
+      <div class="card stage-card">
+        <div class="stage-header">
+          <div class="tabs-bar" focusgroup="tablist nomemory" role="tablist" aria-label="SOMSSI Marketing Channels">
+            <button type="button" role="tab" id="tab-reels" data-channel="reels" aria-selected="true" focusgroupstart>
+              Reels / TikTok (15s)
+            </button>
+            <button type="button" role="tab" id="tab-instagram_feed" data-channel="instagram_feed" aria-selected="false">
+              Instagram Feed (4 Cards)
+            </button>
+            <button type="button" role="tab" id="tab-threads" data-channel="threads" aria-selected="false">
+              Threads
+            </button>
+            <button type="button" role="tab" id="tab-naver_blog" data-channel="naver_blog" aria-selected="false">
+              Naver Blog (B2B/KR)
+            </button>
+            <button type="button" role="tab" id="tab-raw_json" data-channel="raw_json" aria-selected="false">
+              Strict JSON &amp; UTM
+            </button>
+          </div>
+          <label class="utm-toggle">
+            <input type="checkbox" id="preview-utm-toggle" />
+            <span>Make.com 채널별 UTM 링크 치환 미리보기</span>
+          </label>
+        </div>
+
+        <!-- Revise Bar -->
+        <div class="revise-bar">
+          <div class="revise-target">
+            <span>Revise Mode 대상 채널:</span>
+            <strong id="revise-channel-label">reels</strong>
+          </div>
+          <input
+            type="text"
+            id="revise-instruction"
+            placeholder="수정 지시어 입력 (예: 더 짧게 써줘 / 6시간 이상 환승객 강조해줘 / 호텔 컨시어지 추천 포인트 강조)"
+          />
+          <button type="button" id="revise-btn" class="btn btn-accent">선택 채널만 수정 (Revise)</button>
+        </div>
+
+        <!-- Tab Panels -->
+        <div role="tabpanel" id="panel-reels" aria-labelledby="tab-reels" tabindex="0" class="tabpanel"></div>
+        <div role="tabpanel" id="panel-instagram_feed" aria-labelledby="tab-instagram_feed" hidden="until-found" class="tabpanel"></div>
+        <div role="tabpanel" id="panel-threads" aria-labelledby="tab-threads" hidden="until-found" class="tabpanel"></div>
+        <div role="tabpanel" id="panel-naver_blog" aria-labelledby="tab-naver_blog" hidden="until-found" class="tabpanel"></div>
+        <div role="tabpanel" id="panel-raw_json" aria-labelledby="tab-raw_json" hidden="until-found" class="tabpanel"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal: Ground Truth & System Prompt Config -->
+  <dialog id="gt-dialog" class="modal">
+    <form method="dialog" class="modal-box">
+      <header class="modal-header">
+        <h2>Section 2. Ground Truth 설정 &amp; System Prompt</h2>
+        <button type="submit" class="btn btn-ghost btn-sm" aria-label="닫기">✕</button>
+      </header>
+      <div class="modal-body">
+        <p class="helper-text">
+          저장 시 <code>config/ground_truth.json</code>과 <code>somssi_system_prompt.md</code>의 플레이스홀더가 즉시 동기화됩니다.
+        </p>
+        <div class="grid-2" id="gt-form-fields"></div>
+        <details class="prompt-preview-details">
+          <summary>렌더링된 전체 System Prompt + [RAG_KnowledgeBase] 보기</summary>
+          <pre id="rendered-prompt-pre" class="code-block"></pre>
+        </details>
+      </div>
+      <footer class="modal-footer">
+        <button type="button" id="save-gt-btn" class="btn btn-primary">Ground Truth 저장 및 프롬프트 동기화</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <!-- Modal: Approve & Make.com Publish -->
+  <dialog id="publish-dialog" class="modal">
+    <form method="dialog" class="modal-box">
+      <header class="modal-header">
+        <h2>휴먼 검수 승인 &amp; Make.com 배포 파이프라인</h2>
+        <button type="submit" class="btn btn-ghost btn-sm" aria-label="닫기">✕</button>
+      </header>
+      <div class="modal-body">
+        <p class="helper-text">
+          배포 시 본문 내 모든 <code>{{BOOKING_URL}}</code> 리터럴이 각 채널 전용 UTM 링크로 자동 치환됩니다.
+        </p>
+        <label class="field">
+          <span>검수자 이름 (Reviewer)</span>
+          <input type="text" id="publish-reviewer" value="SOMSSI Marketing Manager" />
+        </label>
+        <label class="field">
+          <span>Make.com Webhook URL (선택 · 비워두면 치환된 JSON 다운로드/복사)</span>
+          <input type="url" id="publish-webhook-url" placeholder="https://hook.eu2.make.com/..." />
+        </label>
+        <pre id="publish-preview-pre" class="code-block"></pre>
+      </div>
+      <footer class="modal-footer">
+        <button type="button" id="copy-publish-json-btn" class="btn btn-secondary">UTM 치환 JSON 복사</button>
+        <button type="button" id="confirm-publish-btn" class="btn btn-primary">최종 승인 및 전송</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
