@@ -129,10 +129,17 @@
               Strict JSON &amp; UTM
             </button>
           </div>
-          <label class="utm-toggle">
-            <input type="checkbox" id="preview-utm-toggle" />
-            <span>Make.com 채널별 UTM 링크 치환 미리보기</span>
-          </label>
+          <div class="stage-controls">
+            <div class="view-mode-group" role="group" aria-label="미리보기 레이아웃 선택">
+              <button type="button" class="view-mode-btn active" data-view-mode="split">미리보기 + 규격</button>
+              <button type="button" class="view-mode-btn" data-view-mode="preview">플랫폼 미리보기만</button>
+              <button type="button" class="view-mode-btn" data-view-mode="specs">규격 데이터만</button>
+            </div>
+            <label class="utm-toggle">
+              <input type="checkbox" id="preview-utm-toggle" />
+              <span>Make.com 채널별 UTM 링크 치환 미리보기</span>
+            </label>
+          </div>
         </div>
 
         <!-- Revise Bar -->
