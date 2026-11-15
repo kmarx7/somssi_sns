@@ -22,7 +22,7 @@ test('Generate mode with high-fit K-Culture trend passes all schema & self-check
 });
 
 test('Generate mode with low-fit trend (< 5) triggers skip=true and evergreen content', async () => {
-  const lowFitTrend = PRESET_TRENDS[3]; // Semiconductor export report
+  const lowFitTrend = PRESET_TRENDS.find((t) => t.id === 'trend-low-fit-semiconductor'); // Semiconductor export report
   const { output, validation } = await runCopilot({
     mode: 'generate',
     date: '2026-11-15',
@@ -77,4 +77,21 @@ test('Publishing UTM resolver replaces {{BOOKING_URL}} with channel-specific UTM
   assert.ok(!JSON.stringify(resolved).includes('{{BOOKING_URL}}'));
   assert.ok(resolved.reels.caption.includes('utm_medium=reels'));
   assert.ok(resolved.threads.text.includes('utm_source=threads'));
+});
+
+test('Weekly 5-day Culture Magazine mode (Incheon tourism, food, K-Drama, Korean tradition) passes all validation rules and builds bilingual/image extras', async () => {
+  const incheonTrend = PRESET_TRENDS.find((t) => t.pillar === 'incheon_tourism');
+  const { output, validation, extras } = await runCopilot({
+    mode: 'generate',
+    date: '2026-11-18',
+    contentType: 'culture_magazine',
+    pillar: 'incheon_tourism',
+    trend: incheonTrend
+  });
+
+  assert.equal(validation.valid, true, `Errors: ${validation.errors.join('; ')}`);
+  assert.equal(validation.warnings.length, 0, `Warnings: ${validation.warnings.join('; ')}`);
+  assert.equal(extras.contentType, 'culture_magazine');
+  assert.equal(extras.blogBilingual.enSections.length, 4);
+  assert.equal(extras.imageStudio.instagramCards.length, 4);
 });

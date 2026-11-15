@@ -10,8 +10,9 @@ import {
   resolveBookingUrlsForPublish,
   saveGroundTruth
 } from './src/promptRenderer.js';
-import { fetchLiveTrends, PRESET_TRENDS } from './src/trends.js';
+import { fetchLiveTrends, PRESET_TRENDS, WEEKLY_PILLARS } from './src/trends.js';
 import {
+  buildCompanionMediaExtras,
   buildSubscriptionPromptBundle,
   extractJsonFromSubscriptionOutput,
   getSubscriptionProvidersStatus,
@@ -76,6 +77,7 @@ export const server = http.createServer(async (req, res) => {
         outputSchema,
         systemPrompt,
         presets: PRESET_TRENDS,
+        weeklyPillars: WEEKLY_PILLARS,
         subscriptionProviders: getSubscriptionProvidersStatus()
       });
     }
@@ -111,9 +113,11 @@ export const server = http.createServer(async (req, res) => {
       const payload = {
         mode: 'generate',
         date: body.date || new Date().toISOString().slice(0, 10),
+        contentType: body.contentType || body.trend?.contentType || 'somssi_class',
+        pillar: body.pillar || body.trend?.pillar || 'somssi_class',
         trend: body.trend || PRESET_TRENDS[0]
       };
-      const { output, validation, engineUsed, promptBundle } = await runCopilot(payload, {
+      const { output, validation, engineUsed, promptBundle, extras } = await runCopilot(payload, {
         provider: body.provider || 'local-rule-engine'
       });
       const publishedPreview = resolveBookingUrlsForPublish(output);
@@ -123,7 +127,8 @@ export const server = http.createServer(async (req, res) => {
         validation,
         publishedPreview,
         engineUsed,
-        promptBundle
+        promptBundle,
+        extras
       });
     }
 
@@ -133,9 +138,11 @@ export const server = http.createServer(async (req, res) => {
         mode: 'revise',
         channel: body.channel || 'reels',
         instruction: body.instruction || '',
+        contentType: body.contentType || 'somssi_class',
+        pillar: body.pillar || 'somssi_class',
         previous_output: body.previous_output
       };
-      const { output, validation, engineUsed, promptBundle } = await runCopilot(payload, {
+      const { output, validation, engineUsed, promptBundle, extras } = await runCopilot(payload, {
         provider: body.provider || 'local-rule-engine'
       });
       const publishedPreview = resolveBookingUrlsForPublish(output);
@@ -145,7 +152,8 @@ export const server = http.createServer(async (req, res) => {
         validation,
         publishedPreview,
         engineUsed,
-        promptBundle
+        promptBundle,
+        extras
       });
     }
 
@@ -167,10 +175,12 @@ export const server = http.createServer(async (req, res) => {
       }
       const validation = validateMarketingOutput(parsed);
       const publishedPreview = resolveBookingUrlsForPublish(parsed);
+      const extras = buildCompanionMediaExtras(parsed, body);
       return sendJson(res, 200, {
         output: parsed,
         validation,
         publishedPreview,
+        extras,
         engineUsed: `web-subscription:${body.serviceName || 'manual-paste'}`
       });
     }
