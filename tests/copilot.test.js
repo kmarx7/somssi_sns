@@ -95,3 +95,40 @@ test('Weekly 5-day Culture Magazine mode (Incheon tourism, food, K-Drama, Korean
   assert.equal(extras.blogBilingual.enSections.length, 4);
   assert.equal(extras.imageStudio.instagramCards.length, 4);
 });
+
+test('Different live RSS or custom trends dynamically change all 4 channels (Reels, Instagram, Threads, Naver Blog)', async () => {
+  const resA = await runCopilot({
+    mode: 'generate',
+    date: '2026-11-15',
+    contentType: 'culture_magazine',
+    pillar: 'incheon_tourism',
+    trend: {
+      title: '송도 트라이보울 야간 국악·미디어아트 페스티벌 개막',
+      summary: '인천 송도 센트럴파크 수변 무대에서 야간 국악 공연과 전시가 열린다.',
+      source: 'Google News Live RSS',
+      language: 'ko'
+    }
+  });
+
+  const resB = await runCopilot({
+    mode: 'generate',
+    date: '2026-11-15',
+    contentType: 'culture_magazine',
+    pillar: 'incheon_tourism',
+    trend: {
+      title: '개항장 문화지구 근대건축 갤러리 주말 투어 인기',
+      summary: '19세기 개항기 역사를 간직한 인천 중구 개항장 거리 투어가 호응을 얻고 있다.',
+      source: 'Google News Live RSS',
+      language: 'ko'
+    }
+  });
+
+  assert.equal(resA.validation.valid, true, `Errors A: ${resA.validation.errors.join('; ')}`);
+  assert.equal(resB.validation.valid, true, `Errors B: ${resB.validation.errors.join('; ')}`);
+  assert.notDeepEqual(resA.output.reels.hook, resB.output.reels.hook);
+  assert.notDeepEqual(resA.output.instagram_feed.cards[0], resB.output.instagram_feed.cards[0]);
+  assert.notEqual(resA.output.threads.text, resB.output.threads.text);
+  assert.notEqual(resA.output.naver_blog.title, resB.output.naver_blog.title);
+  assert.notEqual(resA.output.naver_blog.sections[0].body, resB.output.naver_blog.sections[0].body);
+});
+

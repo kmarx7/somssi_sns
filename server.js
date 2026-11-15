@@ -119,7 +119,7 @@ export const server = http.createServer(async (req, res) => {
         pillar: body.pillar || body.trend?.pillar || 'somssi_class',
         trend: body.trend || PRESET_TRENDS[0]
       };
-      const { output, validation, engineUsed, promptBundle, extras } = await runCopilot(payload, {
+      const { output, validation, engineUsed, cliWarning, promptBundle, extras } = await runCopilot(payload, {
         provider: body.provider || 'local-rule-engine'
       });
       const publishedPreview = resolveBookingUrlsForPublish(output);
@@ -129,6 +129,7 @@ export const server = http.createServer(async (req, res) => {
         validation,
         publishedPreview,
         engineUsed,
+        cliWarning,
         promptBundle,
         extras
       });
@@ -144,7 +145,7 @@ export const server = http.createServer(async (req, res) => {
         pillar: body.pillar || 'somssi_class',
         previous_output: body.previous_output
       };
-      const { output, validation, engineUsed, promptBundle, extras } = await runCopilot(payload, {
+      const { output, validation, engineUsed, cliWarning, promptBundle, extras } = await runCopilot(payload, {
         provider: body.provider || 'local-rule-engine'
       });
       const publishedPreview = resolveBookingUrlsForPublish(output);
@@ -154,6 +155,7 @@ export const server = http.createServer(async (req, res) => {
         validation,
         publishedPreview,
         engineUsed,
+        cliWarning,
         promptBundle,
         extras
       });

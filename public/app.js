@@ -1107,6 +1107,26 @@ async function openSubscriptionBridgeModal(inputPayload) {
   document.getElementById('sub-bridge-dialog').showModal();
 }
 
+function showGenerateStatus(message, type = 'ok') {
+  const el = document.getElementById('generate-status-msg');
+  if (!el) return;
+  el.style.display = 'block';
+  if (type === 'warn') {
+    el.style.background = '#fffbeb';
+    el.style.border = '1px solid #f59e0b';
+    el.style.color = '#92400e';
+  } else if (type === 'err') {
+    el.style.background = '#fef2f2';
+    el.style.border = '1px solid #ef4444';
+    el.style.color = '#991b1b';
+  } else {
+    el.style.background = '#ecfdf5';
+    el.style.border = '1px solid #10b981';
+    el.style.color = '#065f46';
+  }
+  el.innerHTML = message;
+}
+
 async function generateDraft() {
   const provider = document.getElementById('subscription-provider').value;
   const inputPayload = buildCurrentGeneratePayload();
@@ -1118,7 +1138,17 @@ async function generateDraft() {
 
   const btn = document.getElementById('generate-btn');
   btn.disabled = true;
-  btn.textContent = '구독 모델로 초안 생성 중...';
+  btn.textContent =
+    provider === 'local-rule-engine'
+      ? '⚡ 4개 채널 초안 즉시 생성 중...'
+      : `⏳ ${provider} 구독 모델로 4개 채널 생성 중 (약 15~35초)...`;
+  showGenerateStatus(
+    provider === 'local-rule-engine'
+      ? '내장 솜씨 룰 엔진으로 4개 채널 원고를 생성하고 있습니다...'
+      : `로컬 <strong>${escapeHtml(provider)}</strong> 구독 CLI를 호출하여 4개 채널 JSON을 생성 중입니다...`,
+    'warn'
+  );
+
   try {
     const res = await fetch('/api/generate', {
       method: 'POST',
@@ -1129,6 +1159,9 @@ async function generateDraft() {
       })
     });
     const data = await res.json();
+    if (!res.ok || !data.output) {
+      throw new Error(data.error || '서버에서 초안을 생성하지 못했습니다.');
+    }
     state.currentOutput = data.output;
     state.publishedPreview = data.publishedPreview;
     state.validation = data.validation;
@@ -1139,6 +1172,22 @@ async function generateDraft() {
     document.getElementById('engine-badge').textContent = `구독 모드: ${data.engineUsed}`;
     renderSidebarStatus();
     renderChannels();
+
+    const nowStr = new Date().toLocaleTimeString('ko-KR', { hour12: false });
+    const shortTitle = (inputPayload.trend?.title || '').slice(0, 34);
+    if (data.cliWarning) {
+      showGenerateStatus(
+        `⚠️ <strong>[${nowStr}] CLI 알림:</strong> ${escapeHtml(data.cliWarning)}<br/>→ 내장 솜씨 룰 엔진으로 <strong>"${escapeHtml(shortTitle)}…"</strong> 주제의 4개 채널 초안을 생성했습니다.`,
+        'warn'
+      );
+    } else {
+      showGenerateStatus(
+        `✓ <strong>[${nowStr}] 4개 채널 초안 생성 완료!</strong><br/>주제: <em>"${escapeHtml(shortTitle)}…"</em> (${escapeHtml(data.engineUsed)})`,
+        'ok'
+      );
+    }
+  } catch (err) {
+    showGenerateStatus(`❌ 생성 오류: ${escapeHtml(err.message)}`, 'err');
   } finally {
     btn.disabled = false;
     btn.textContent = '4개 채널 초안 생성 (Generate Mode)';
@@ -1181,6 +1230,9 @@ async function reviseDraft() {
       })
     });
     const data = await res.json();
+    if (!res.ok || !data.output) {
+      throw new Error(data.error || '채널 수정 중 오류가 발생했습니다.');
+    }
     state.currentOutput = data.output;
     state.publishedPreview = data.publishedPreview;
     state.validation = data.validation;
@@ -1189,6 +1241,13 @@ async function reviseDraft() {
     document.getElementById('engine-badge').textContent = `구독 모드: ${data.engineUsed}`;
     renderSidebarStatus();
     renderChannels();
+    const nowStr = new Date().toLocaleTimeString('ko-KR', { hour12: false });
+    showGenerateStatus(
+      `✓ <strong>[${nowStr}] ${escapeHtml(state.activeChannel)} 채널 수정 완료!</strong> (${escapeHtml(data.engineUsed)})`,
+      'ok'
+    );
+  } catch (err) {
+    showGenerateStatus(`❌ 수정 오류: ${escapeHtml(err.message)}`, 'err');
   } finally {
     btn.disabled = false;
     btn.textContent = '선택 채널만 수정 (Revise)';
@@ -1242,9 +1301,12 @@ async function init() {
   renderWeeklyCalendarBar(state.config.weeklyPillars || []);
   renderCliStatusBox(state.config.subscriptionProviders || []);
 
-  document.getElementById('trend-preset-select').addEventListener('change', (e) => {
+  document.getElementById('trend-preset-select').addEventListener('change', async (e) => {
     const t = state.trends[Number(e.target.value)];
     applyTrendForm(t);
+    if (document.getElementById('subscription-provider').value === 'local-rule-engine') {
+      await generateDraft();
+    }
   });
 
   document.getElementById('content-type-select').addEventListener('change', (e) => {
@@ -1283,10 +1345,13 @@ async function init() {
     if (msg) {
       msg.textContent =
         liveCount > 0
-          ? `✓ '${q}' 검색어로 실시간 뉴스 ${liveCount}건을 불러와 드롭다운 상단에 반영했습니다.`
+          ? `✓ '${q}' 검색어로 실시간 뉴스 ${liveCount}건을 불러와 4개 채널 초안에 즉시 반영했습니다.`
           : `네트워크 응답이 없어 기본 프리셋을 유지했습니다.`;
     }
     btn.textContent = '📡 실시간 RSS 불러오기';
+    if (document.getElementById('subscription-provider').value === 'local-rule-engine') {
+      await generateDraft();
+    }
   });
 
   document.getElementById('generate-btn').addEventListener('click', generateDraft);
