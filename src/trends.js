@@ -137,44 +137,73 @@ export const PRESET_TRENDS = [
   }
 ];
 
+function stripHtmlEntities(str = '') {
+  return String(str)
+    .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&#39;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 /**
  * Fetches live K-Culture / Incheon Travel / K-Pop / Food RSS items from Google News RSS.
+ * Automatically uses Korean Google News edition when Korean characters are in the query,
+ * and places live RSS items at the top of the returned list.
  */
-export async function fetchLiveTrends(query = 'Korea traditional culture travel Incheon') {
-  const url = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=en-US&gl=US&ceid=US:en`;
+export async function fetchLiveTrends(
+  query = '인천 송도 여행 한국 전통문화',
+  pillar = 'incheon_tourism',
+  contentType = 'culture_magazine'
+) {
+  const isKoreanQuery = /[가-힣]/.test(query);
+  const localeParams = isKoreanQuery
+    ? 'hl=ko&gl=KR&ceid=KR:ko'
+    : 'hl=en-US&gl=US&ceid=US:en';
+  const url = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&${localeParams}`;
+
   try {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 5000);
+    const timer = setTimeout(() => controller.abort(), 6000);
     const res = await fetch(url, { signal: controller.signal });
     clearTimeout(timer);
     if (!res.ok) return PRESET_TRENDS;
     const xml = await res.text();
-    const items = [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)].slice(0, 5);
+    const items = [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)].slice(0, 8);
     if (items.length === 0) return PRESET_TRENDS;
 
     const live = items.map((match, idx) => {
       const block = match[1];
-      const rawTitle =
-        (block.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>|<title>(.*?)<\/title>/) || [])[1] ||
-        (block.match(/<title>(.*?)<\/title>/) || [])[1] ||
-        `Korea Culture Trend #${idx + 1}`;
-      const cleanTitle = rawTitle
-        .replace(/&amp;/g, '&')
-        .replace(/&#39;/g, "'")
-        .replace(/&quot;/g, '"');
-      const sourceMatch =
-        (block.match(/<source[^>]*>(.*?)<\/source>/) || [])[1] || 'Google News RSS';
+      const rawTitle = (block.match(/<title>([\s\S]*?)<\/title>/) || [])[1] || `Live Trend #${idx + 1}`;
+      const rawDesc = (block.match(/<description>([\s\S]*?)<\/description>/) || [])[1] || '';
+      const rawSource = (block.match(/<source[^>]*>([\s\S]*?)<\/source>/) || [])[1] || 'Google News RSS';
+      const rawPubDate = (block.match(/<pubDate>([\s\S]*?)<\/pubDate>/) || [])[1] || '';
+
+      const cleanTitle = stripHtmlEntities(rawTitle);
+      const cleanDesc = stripHtmlEntities(rawDesc);
+      const cleanSource = stripHtmlEntities(rawSource);
+      const dateShort = rawPubDate ? new Date(rawPubDate).toISOString().slice(0, 10) : '';
+
       return {
-        id: `live-${idx + 1}`,
-        pillar: 'k_pop_drama',
-        contentType: 'culture_magazine',
+        id: `live-${Date.now()}-${idx + 1}`,
+        isLiveRss: true,
+        pillar,
+        contentType,
         title: cleanTitle,
-        summary: `Recent K-Culture & Korea travel coverage: ${cleanTitle}`,
-        source: sourceMatch,
+        summary:
+          cleanDesc && cleanDesc !== cleanTitle
+            ? cleanDesc
+            : `[실시간 RSS 수집 뉴스] ${cleanTitle} (${cleanSource})`,
+        source: `${cleanSource}${dateShort ? ` · ${dateShort}` : ''} (RSS)`,
         language: /[가-힣]/.test(cleanTitle) ? 'ko' : 'en'
       };
     });
-    return [...PRESET_TRENDS, ...live];
+    return [...live, ...PRESET_TRENDS];
   } catch {
     return PRESET_TRENDS;
   }

@@ -28,7 +28,6 @@
       <section class="card">
         <div class="card-header">
           <h2>1. 주간 7일 편성표 &amp; 트렌드 입력</h2>
-          <button type="button" id="fetch-live-btn" class="btn btn-ghost btn-sm">실시간 RSS 불러오기</button>
         </div>
 
         <div class="weekly-pillar-box">
@@ -55,6 +54,22 @@
               </select>
             </label>
           </div>
+        </div>
+
+        <div class="field" style="margin-bottom:8px;">
+          <span>실시간 Google News RSS 검색어 (한국어 입력 시 국내 뉴스 · 영어 입력 시 글로벌 뉴스 수집)</span>
+          <div style="display:flex;gap:6px;">
+            <input
+              type="text"
+              id="rss-query-input"
+              value="인천 송도 여행 한국 전통문화"
+              placeholder="예: 인천 송도 여행, K-드라마 촬영지, 가야금, 신포시장 맛집"
+            />
+            <button type="button" id="fetch-live-btn" class="btn btn-accent btn-sm" style="white-space:nowrap;">
+              📡 실시간 RSS 불러오기
+            </button>
+          </div>
+          <small id="rss-status-msg" style="color:var(--ok);font-weight:600;"></small>
         </div>
 
         <label class="field">

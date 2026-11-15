@@ -103,9 +103,11 @@ export const server = http.createServer(async (req, res) => {
 
     if (req.method === 'GET' && url.pathname === '/api/trends') {
       const live = url.searchParams.get('live') === '1';
-      const query = url.searchParams.get('q') || 'Korea traditional culture travel Incheon';
-      const trends = live ? await fetchLiveTrends(query) : PRESET_TRENDS;
-      return sendJson(res, 200, { trends });
+      const query = url.searchParams.get('q') || '인천 송도 여행 한국 전통문화';
+      const pillar = url.searchParams.get('pillar') || 'incheon_tourism';
+      const contentType = url.searchParams.get('contentType') || 'culture_magazine';
+      const trends = live ? await fetchLiveTrends(query, pillar, contentType) : PRESET_TRENDS;
+      return sendJson(res, 200, { trends, query });
     }
 
     if (req.method === 'POST' && url.pathname === '/api/generate') {

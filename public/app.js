@@ -388,6 +388,10 @@ function renderWeeklyCalendarBar(weeklyPillars = []) {
           pillarSel.value = found.pillar;
         }
         // Match preset trend for that pillar
+        if (found.rssQuery) {
+          const rssInput = document.getElementById('rss-query-input');
+          if (rssInput) rssInput.value = found.rssQuery;
+        }
         const matchingTrendIdx = state.trends.findIndex((t) => t.pillar === found.pillar);
         if (matchingTrendIdx !== -1) {
           document.getElementById('trend-preset-select').value = String(matchingTrendIdx);
@@ -404,10 +408,12 @@ function populateTrendSelect(trends) {
   state.trends = trends;
   const select = document.getElementById('trend-preset-select');
   select.innerHTML = trends
-    .map(
-      (t, idx) =>
-        `<option value="${idx}">[${t.contentType === 'culture_magazine' ? '문화매거진' : '정기클래스'} · ${t.language.toUpperCase()}] ${escapeHtml(t.title.slice(0, 50))}</option>`
-    )
+    .map((t, idx) => {
+      const prefix = t.isLiveRss
+        ? '🔥 [실시간 RSS]'
+        : `[${t.contentType === 'culture_magazine' ? '문화매거진' : '정기클래스'} · ${t.language.toUpperCase()}]`;
+      return `<option value="${idx}">${prefix} ${escapeHtml(t.title.slice(0, 52))}</option>`;
+    })
     .join('');
   applyTrendForm(trends[0]);
 }
@@ -1259,13 +1265,28 @@ async function init() {
 
   document.getElementById('fetch-live-btn').addEventListener('click', async () => {
     const btn = document.getElementById('fetch-live-btn');
-    btn.textContent = '불러오는 중...';
+    const msg = document.getElementById('rss-status-msg');
+    const qInput = document.getElementById('rss-query-input');
     const currentDay = state.weeklyPillars.find((w) => w.dayIndex === state.selectedDayIndex);
-    const q = currentDay?.rssQuery || 'Korea traditional culture travel Incheon';
-    const res = await fetch(`/api/trends?live=1&q=${encodeURIComponent(q)}`);
+    const q = (qInput && qInput.value.trim()) || currentDay?.rssQuery || '인천 송도 여행 한국 전통문화';
+    const pillar = document.getElementById('pillar-select').value;
+    const contentType = document.getElementById('content-type-select').value;
+
+    btn.textContent = '수집 중...';
+    if (msg) msg.textContent = `'${q}' 관련 최신 뉴스 RSS 수집 중...`;
+    const res = await fetch(
+      `/api/trends?live=1&q=${encodeURIComponent(q)}&pillar=${encodeURIComponent(pillar)}&contentType=${encodeURIComponent(contentType)}`
+    );
     const data = await res.json();
+    const liveCount = (data.trends || []).filter((t) => t.isLiveRss).length;
     populateTrendSelect(data.trends || []);
-    btn.textContent = '실시간 RSS 불러오기';
+    if (msg) {
+      msg.textContent =
+        liveCount > 0
+          ? `✓ '${q}' 검색어로 실시간 뉴스 ${liveCount}건을 불러와 드롭다운 상단에 반영했습니다.`
+          : `네트워크 응답이 없어 기본 프리셋을 유지했습니다.`;
+    }
+    btn.textContent = '📡 실시간 RSS 불러오기';
   });
 
   document.getElementById('generate-btn').addEventListener('click', generateDraft);
