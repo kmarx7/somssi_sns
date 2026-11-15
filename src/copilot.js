@@ -79,35 +79,47 @@ export function resolveSubscriptionCliBinary(provider) {
 }
 
 export function getSubscriptionProvidersStatus() {
+  const home = process.env.HOME || '/Users/kapital';
   return [
     {
       id: 'claude-cli',
-      name: 'Claude Pro/Max 구독 (Claude CLI)',
+      name: '🟣 Claude Pro/Max 구독 (Claude CLI)',
+      binPath: '/Users/kapital/.local/bin/claude',
       installed: fs.existsSync('/Users/kapital/.local/bin/claude'),
+      authenticated: fs.existsSync(`${home}/.claude`),
+      loginCommand: 'claude login',
       mode: 'cli-subscription'
     },
     {
       id: 'codex-cli',
-      name: 'ChatGPT Plus/Pro 구독 (Codex CLI)',
+      name: '🟢 ChatGPT Plus/Pro 구독 (Codex CLI)',
+      binPath: '/opt/homebrew/bin/codex',
       installed: fs.existsSync('/opt/homebrew/bin/codex'),
+      authenticated: fs.existsSync(`${home}/.codex/auth.json`),
+      loginCommand: 'codex login',
       mode: 'cli-subscription'
     },
     {
       id: 'gemini-cli',
-      name: 'Gemini Advanced 구독 (Gemini CLI)',
+      name: '🔵 Gemini Advanced 구독 (Gemini CLI)',
+      binPath: '/Users/kapital/.hermes/node/bin/gemini',
       installed: fs.existsSync('/Users/kapital/.hermes/node/bin/gemini'),
+      authenticated: fs.existsSync(`${home}/.gemini/oauth_creds.json`),
+      loginCommand: 'gemini',
       mode: 'cli-subscription'
     },
     {
       id: 'web-subscription',
-      name: '웹 브라우저 구독 연동 (ChatGPT / Claude / Gemini 웹 복사·붙여넣기)',
+      name: '🌐 웹 브라우저 구독 연동 (ChatGPT·Claude·Gemini 웹 복사/붙여넣기)',
       installed: true,
+      authenticated: true,
       mode: 'web-subscription'
     },
     {
       id: 'local-rule-engine',
-      name: '내장 솜씨 룰 엔진 (즉시 생성 · 오프라인)',
+      name: '⚡ 내장 솜씨 룰 엔진 (즉시 생성 · 오프라인)',
       installed: true,
+      authenticated: true,
       mode: 'local'
     }
   ];
@@ -163,7 +175,7 @@ export function extractJsonFromSubscriptionOutput(rawText = '') {
   }
 }
 
-export function callSubscriptionCli(provider, combinedPrompt, timeoutMs = 90000) {
+export function callSubscriptionCli(provider, combinedPrompt, timeoutMs = 120000) {
   return new Promise((resolve, reject) => {
     const bin = resolveSubscriptionCliBinary(provider);
     if (!bin) {
@@ -172,19 +184,22 @@ export function callSubscriptionCli(provider, combinedPrompt, timeoutMs = 90000)
 
     let args = [];
     if (provider === 'claude-cli') {
-      args = ['-p', combinedPrompt, '--output-format', 'text'];
+      args = ['-p', '--output-format', 'text', '--tools', ''];
     } else if (provider === 'codex-cli') {
-      args = ['exec', combinedPrompt];
+      args = ['exec', '-'];
     } else if (provider === 'gemini-cli') {
-      args = ['-p', combinedPrompt];
+      args = ['-p', 'Follow the instructions piped via stdin and output ONLY the JSON object.'];
     } else {
       return reject(new Error(`Unsupported CLI provider: ${provider}`));
     }
 
     const child = spawn(bin, args, {
       env: { ...process.env, NO_COLOR: '1' },
-      stdio: ['ignore', 'pipe', 'pipe']
+      stdio: ['pipe', 'pipe', 'pipe']
     });
+
+    child.stdin.write(combinedPrompt);
+    child.stdin.end();
 
     let stdout = '';
     let stderr = '';

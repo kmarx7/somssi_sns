@@ -1206,6 +1206,25 @@ function renderGroundTruthDialog() {
   document.getElementById('rendered-prompt-pre').textContent = state.config.systemPrompt;
 }
 
+function renderCliStatusBox(providers = []) {
+  const box = document.getElementById('cli-status-box');
+  if (!box) return;
+  const cliOnly = providers.filter((p) => p.mode === 'cli-subscription');
+  box.innerHTML =
+    '<div style="font-weight:700;margin-bottom:4px;color:var(--text);">내 Mac 로컬 구독 CLI 연결 상태:</div>' +
+    cliOnly
+      .map((p) => {
+        const ok = p.installed && p.authenticated;
+        const badge = ok
+          ? '<span style="color:var(--ok);font-weight:700;">● 연결됨 (설치·로그인 완료)</span>'
+          : p.installed
+            ? `<span style="color:var(--warn);">● 로그인 필요 (<code>${escapeHtml(p.loginCommand)}</code>)</span>`
+            : '<span style="color:var(--err);">● 미설치</span>';
+        return `<div style="display:flex;justify-content:space-between;padding:2px 0;"><span>${escapeHtml(p.name)}</span>${badge}</div>`;
+      })
+      .join('');
+}
+
 async function init() {
   setupTabs();
   setupViewModeButtons();
@@ -1215,6 +1234,7 @@ async function init() {
   state.config = await cfgRes.json();
   populateTrendSelect(state.config.presets || []);
   renderWeeklyCalendarBar(state.config.weeklyPillars || []);
+  renderCliStatusBox(state.config.subscriptionProviders || []);
 
   document.getElementById('trend-preset-select').addEventListener('change', (e) => {
     const t = state.trends[Number(e.target.value)];
