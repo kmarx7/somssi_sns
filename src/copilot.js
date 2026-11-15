@@ -354,20 +354,20 @@ function generateCultureMagazineDraft(input, groundTruth, score, skip) {
           }
         },
         {
-          title: { kr: '송도 로컬 문화 가이드', en: 'Songdo Culture Guide' },
+          title: { kr: '송도 신규 관광상품 예고', en: 'New Tour Coming Soon' },
           body: {
-            kr: '인천공항에서 약 25분! 송도 문화 산책과 솜씨(SOMSSI) 소식은 {{BOOKING_URL}} 에서 확인하세요.',
-            en: 'About 25 mins from Incheon Airport. Explore our cultural guide at {{BOOKING_URL}}'
+            kr: '송도에서 곧 판매 예정인 가야금·한복 관광상품 《줄을 다루는 솜씨》 소식은 {{BOOKING_URL}} 참고!',
+            en: 'Our Songdo gayageum & Hanbok class is coming soon! Info at {{BOOKING_URL}}'
           }
         }
       ],
-      igCaption: `[오늘의 문화 소식: ${shortHeadline}] 최근 K-컬처와 한국 문화예술 소식과 함께 주목받는 인천 송도 센트럴파크 일대를 소개해요! 복합문화공간 트라이보울과 수상택시, 고즈넉한 송도 한옥마을 산책을 즐기고 센트럴파크 인근 솜씨(SOMSSI)에서 한국 전통 차와 12현 가야금 선율도 만나보세요.\n\nInspired by today's K-Culture spotlight (${sanitizeTrendText(trend.title, 55)})? Just ${airportMin} minutes from Incheon Int'l Airport, Songdo Central Park pairs futuristic architecture at Tri-bowl with traditional Korean roofs and serene tea & gayageum aesthetics at SOMSSI. More info: {{BOOKING_URL}}`,
-      threadsText: `Have you seen today's spotlight on "${sanitizeTrendText(trend.title, 65)}"? In Incheon (about ${airportMin} mins from Incheon Int'l Airport), Songdo Central Park blends modern K-Drama architecture with tranquil Hanok rooftops and traditional #gayageum (가야금) culture at SOMSSI ({{BOOKING_URL}}). What part of Korean culture or Incheon would you love to explore next?`,
+      igCaption: `[오늘의 문화 소식: ${shortHeadline}] 최근 K-컬처와 한국 문화예술 소식과 함께 주목받는 인천 송도 센트럴파크 일대를 소개해요! 복합문화공간 트라이보울과 수상택시, 고즈넉한 송도 한옥마을 산책을 즐기고, 센트럴파크 인근 솜씨(SOMSSI)에서 새롭게 선보일 예정인 한국 전통 차·한복·12현 가야금 문화관광 상품 《줄을 다루는 솜씨》(상품 판매 예정)도 기대해 주세요.\n\nInspired by today's K-Culture spotlight (${sanitizeTrendText(trend.title, 48)})? Just ${airportMin} mins from Incheon Airport, Songdo Central Park pairs Tri-bowl with traditional roofs—where SOMSSI is preparing an upcoming gayageum & Hanbok tourism program (Coming Soon). Guide: {{BOOKING_URL}}`,
+      threadsText: `Have you seen today's spotlight on "${sanitizeTrendText(trend.title, 58)}"? In Incheon (about ${airportMin} mins from Incheon Int'l Airport), Songdo Central Park blends modern K-Drama architecture with Hanok rooftops—where SOMSSI is preparing an upcoming #gayageum (가야금) & Hanbok tourism experience (Coming Soon: {{BOOKING_URL}}). What part of Korean culture would you love to explore next?`,
       blogTitle: `인천 송도 가볼만한곳 ${sanitizeTrendText(trend.title, 22)} 문화 가이드`.slice(0, 39),
       blogKeywords: ['송도 가볼만한곳', '인천 관광지', '트라이보울', '송도 센트럴파크', '인천 문화예술', '외국인 한국문화체험']
     },
     incheon_tourism: {
-      angle: `Highlighting "${sanitizeTrendText(trend.title, 70)}" alongside Incheon's cultural tourism corridor—from Songdo Central Park and Hanok Village to the Gaehangjang Open Port district.`,
+      angle: `Highlighting "${sanitizeTrendText(trend.title, 70)}" alongside Incheon's cultural tourism corridor—from Songdo Central Park and Hanok Village to the Gaehangjang Open Port district—and introducing SOMSSI's upcoming cultural tourism product.`,
       reelsHook: {
         kr: isKoreanTrend ? sanitizeTrendText(trend.title, 36) : '과거와 미래가 만나는 인천 문화 산책',
         en: (!isKoreanTrend ? sanitizeTrendText(trend.title, 36) : 'Incheon’s Past & Future Walk!').slice(0, 38)
@@ -376,10 +376,10 @@ function generateCultureMagazineDraft(input, groundTruth, score, skip) {
         sanitizeTrendText(trend.title, 28) || 'Incheon cultural travel spot',
         'Songdo Central Park & Hanok',
         'Tri-bowl cultural arts space',
-        'Calm tea & gayageum in Songdo'
+        'New gayageum tour coming soon'
       ],
       reelsCaption:
-        'From historic Open Port galleries to Songdo Central Park & Korean arts! Incheon guide: {{BOOKING_URL}}',
+        'Explore Incheon’s Open Port & Songdo Central Park—plus SOMSSI’s upcoming cultural class (Coming Soon): {{BOOKING_URL}}',
       igCards: [
         {
           title: { kr: shortCardTitleKr, en: 'Incheon Arts Walk' },
@@ -403,20 +403,20 @@ function generateCultureMagazineDraft(input, groundTruth, score, skip) {
           }
         },
         {
-          title: { kr: '송도에서 만나는 전통예술', en: 'Songdo Arts Guide' },
+          title: { kr: '송도 신규 관광상품 예고', en: 'New Tour Coming Soon' },
           body: {
-            kr: '센트럴파크 인근 솜씨(SOMSSI)가 전하는 인천 문화·클래스 안내는 {{BOOKING_URL}} 를 참고하세요.',
-            en: 'Curated by SOMSSI near Songdo Central Park. See details at {{BOOKING_URL}}'
+            kr: '센트럴파크 인근 솜씨(SOMSSI)가 준비 중인 가야금·한복 관광상품(판매 예정) 안내는 {{BOOKING_URL}} 참고!',
+            en: 'SOMSSI’s new gayageum & Hanbok tour in Songdo is coming soon: {{BOOKING_URL}}'
           }
         }
       ],
-      igCaption: `[인천 로컬 큐레이션: ${shortHeadline}] 인천은 19세기 개항기의 역사를 간직한 개항장 문화지구·차이나타운부터 바닷물이 흐르는 송도 센트럴파크와 한옥마을, 복합문화공간 트라이보울까지 다채로운 매력을 지닌 문화예술 도시예요. 송도 센트럴파크 인근 솜씨(SOMSSI)와 함께 인천 여행을 계획해 보세요.\n\nExploring Incheon (${sanitizeTrendText(trend.title, 50)})? Pair a walk through the historic Gaehangjang Open Port district with an afternoon at Songdo Central Park, Hanok Village, and SOMSSI's cultural studio (about ${airportMin} mins from Incheon Int'l Airport). Guide: {{BOOKING_URL}}`,
-      threadsText: `Following today's Incheon travel topic ("${sanitizeTrendText(trend.title, 60)}"), have you explored Songdo Central Park's Hanok Village or the 19th-century galleries of Gaehangjang Open Port? Right near Songdo Central Park, we also share traditional Korean tea and #gayageum (가야금) culture at SOMSSI ({{BOOKING_URL}}). What is your favorite neighborhood in Korea?`,
+      igCaption: `[인천 로컬 큐레이션: ${shortHeadline}] 인천은 19세기 개항기의 역사를 간직한 개항장 문화지구·차이나타운부터 바닷물이 흐르는 송도 센트럴파크와 한옥마을, 복합문화공간 트라이보울까지 다채로운 매력을 지닌 문화예술 도시예요. 센트럴파크 인근 솜씨(SOMSSI)에서 현재 준비 중인 신규 문화관광 상품 《줄을 다루는 솜씨》(상품 판매 예정) 소식도 함께 확인해 보세요.\n\nExploring Incheon (${sanitizeTrendText(trend.title, 45)})? Pair the historic Gaehangjang Open Port district with Songdo Central Park, where SOMSSI is preparing a new 120-min gayageum & Hanbok tourism program (Coming Soon, 25m from ICN). Pre-launch guide: {{BOOKING_URL}}`,
+      threadsText: `Following today's Incheon travel topic ("${sanitizeTrendText(trend.title, 55)}"), have you explored Songdo Central Park's Hanok Village or the 19th-century galleries of Gaehangjang Open Port? Right near Songdo Central Park, SOMSSI is also preparing a new Korean tea & #gayageum (가야금) tourism program (Coming Soon: {{BOOKING_URL}}). What is your favorite neighborhood in Korea?`,
       blogTitle: `인천 관광지 추천 ${sanitizeTrendText(trend.title, 24)} 코스`.slice(0, 39),
       blogKeywords: ['인천 관광지', '송도 가볼만한곳', '개항장 문화지구', '송도 한옥마을', '인천 문화예술', '인천 이색체험']
     },
     incheon_food_tea: {
-      angle: `Connecting "${sanitizeTrendText(trend.title, 70)}" with Incheon's culinary & tea heritage: Sinpo Market dakgangjeong, Chinatown delicacies, and traditional Korean tea & dagwa in Songdo.`,
+      angle: `Connecting "${sanitizeTrendText(trend.title, 70)}" with Incheon's culinary & tea heritage: Sinpo Market dakgangjeong, Chinatown delicacies, and SOMSSI's upcoming Korean tea & gayageum tourism program in Songdo.`,
       reelsHook: {
         kr: isKoreanTrend ? sanitizeTrendText(trend.title, 36) : '신포 닭강정부터 전통 다과까지 인천 미식',
         en: (!isKoreanTrend ? sanitizeTrendText(trend.title, 36) : 'Incheon Food & Korean Tea!').slice(0, 38)
@@ -425,10 +425,10 @@ function generateCultureMagazineDraft(input, groundTruth, score, skip) {
         sanitizeTrendText(trend.title, 28) || 'Incheon local food & tea',
         'Sinpo Market & Chinatown eats',
         'Songdo Korean tea & yakgwa',
-        'Sweet calm with 12 silk strings'
+        'New tea & string tour soon!'
       ],
       reelsCaption:
-        'Taste Incheon’s street food & unwind with traditional Korean tea and dagwa in Songdo! {{BOOKING_URL}}',
+        'Taste Incheon’s street food & discover our upcoming Korean tea and gayageum class in Songdo (Coming Soon)! {{BOOKING_URL}}',
       igCards: [
         {
           title: { kr: shortCardTitleKr, en: 'Incheon Food & Tea' },
@@ -452,32 +452,32 @@ function generateCultureMagazineDraft(input, groundTruth, score, skip) {
           }
         },
         {
-          title: { kr: '송도에서 즐기는 다도와 소리', en: 'Tea & Music Studio' },
+          title: { kr: '다도·가야금 상품 판매예정', en: 'Tea & Music Soon' },
           body: {
-            kr: '전통 차·다과와 가야금 선율이 함께하는 송도 솜씨(SOMSSI) 소식은 {{BOOKING_URL}} 에서 만나보세요.',
-            en: 'Experience traditional tea, refreshments, and gayageum at SOMSSI: {{BOOKING_URL}}'
+            kr: '전통 다과·차와 가야금 연주를 즐기는 송도 솜씨(SOMSSI) 신규 관광상품이 곧 판매 예정이에요: {{BOOKING_URL}}',
+            en: 'Our Songdo tea & gayageum class is coming soon: {{BOOKING_URL}}'
           }
         }
       ],
-      igCaption: `[오늘의 미식·다과 토픽: ${shortHeadline}] 인천 미식 여행의 매력은 활기찬 로컬 먹거리와 정갈한 전통 다과 문화를 하루에 모두 만날 수 있다는 점이에요! 신포국제시장의 바삭한 닭강정이나 차이나타운 별미를 맛본 뒤, 송도 센트럴파크 인근에서 은은한 한국 전통 차와 다과를 즐겨보세요.\n\nCraving an Incheon food & tea itinerary (${sanitizeTrendText(trend.title, 50)})? Start with Sinpo International Market's famous dakgangjeong, then head to Songdo Central Park for traditional Korean tea, refreshments, and cultural serenity at SOMSSI. Details: {{BOOKING_URL}}`,
-      threadsText: `Inspired by "${sanitizeTrendText(trend.title, 60)}"—are you team street food or team quiet tea house when traveling in Korea? In Incheon, you can try crispy dakgangjeong at Sinpo Market and relax near Songdo Central Park with Korean tea, refreshments, and #gayageum (가야금) melodies at SOMSSI ({{BOOKING_URL}}). What is your favorite Korean snack?`,
+      igCaption: `[오늘의 미식·다과 토픽: ${shortHeadline}] 인천 미식 여행의 매력은 활기찬 로컬 먹거리와 정갈한 전통 다과 문화를 하루에 모두 만날 수 있다는 점이에요! 신포국제시장의 바삭한 닭강정이나 차이나타운 별미를 맛본 뒤, 송도 센트럴파크 인근 솜씨(SOMSSI)가 새롭게 선보일 한국 전통 차·다과·가야금 문화관광 상품(상품 판매 예정)도 만나보세요.\n\nCraving an Incheon food & tea itinerary (${sanitizeTrendText(trend.title, 45)})? Start at Sinpo Market, then look forward to SOMSSI's upcoming Korean tea, refreshments & gayageum tourism experience near Songdo Central Park (Coming Soon). Details: {{BOOKING_URL}}`,
+      threadsText: `Inspired by "${sanitizeTrendText(trend.title, 55)}"—are you team street food or team quiet tea house when traveling in Korea? In Incheon, you can try crispy dakgangjeong at Sinpo Market, and soon you'll also be able to join SOMSSI's upcoming Korean tea, dagwa & #gayageum (가야금) tourism program in Songdo (Coming Soon: {{BOOKING_URL}}). What is your favorite Korean snack?`,
       blogTitle: `인천 미식 여행 ${sanitizeTrendText(trend.title, 24)} 다과 코스`.slice(0, 39),
       blogKeywords: ['인천 맛집', '신포국제시장', '송도 가볼만한곳', '한국 전통 다과', '인천 여행 코스', '외국인 한국문화체험']
     },
     korean_tradition: {
-      angle: `Sharing the philosophy of Korean traditional aesthetics around "${sanitizeTrendText(trend.title, 70)}"—paulownia wood, 12 silk strings, and graceful Hanbok lines in Songdo.`,
+      angle: `Sharing the philosophy of Korean traditional aesthetics around "${sanitizeTrendText(trend.title, 70)}"—paulownia wood, 12 silk strings, and graceful Hanbok lines—while introducing SOMSSI's upcoming Songdo cultural tourism program.`,
       reelsHook: {
         kr: isKoreanTrend ? sanitizeTrendText(trend.title, 36) : '오동나무와 명주실 12줄이 만드는 여운',
         en: (!isKoreanTrend ? sanitizeTrendText(trend.title, 36) : 'The Calm Beauty of 12 Strings').slice(0, 38)
       },
       reelsLines: [
         sanitizeTrendText(trend.title, 28) || 'Korean traditional heritage',
-        'Bare fingertips, 12 silk strings',
+        'Bare hands & 12 silk strings',
         'Nonghyeon: gentle vibrato',
-        'Hanbok lines & quiet mindfulness'
+        'Songdo class coming soon!'
       ],
       reelsCaption:
-        'Discover the natural harmony of Korean Hanbok & the 12-string gayageum in Songdo. {{BOOKING_URL}}',
+        'Discover the harmony of Hanbok & the 12-string gayageum in Songdo—new tourism class coming soon! {{BOOKING_URL}}',
       igCards: [
         {
           title: { kr: shortCardTitleKr, en: 'Korean Aesthetics' },
@@ -501,15 +501,15 @@ function generateCultureMagazineDraft(input, groundTruth, score, skip) {
           }
         },
         {
-          title: { kr: '송도에서 만나는 전통문화', en: 'Songdo Heritage' },
+          title: { kr: '송도 관광상품 오픈 예정', en: 'Coming Soon Songdo' },
           body: {
-            kr: '송도 센트럴파크 인근 솜씨(SOMSSI)의 한국 전통문화 이야기는 {{BOOKING_URL}} 에서 확인하세요.',
-            en: 'Explore Korean traditional culture with SOMSSI in Songdo at {{BOOKING_URL}}'
+            kr: '송도 센트럴파크 인근 솜씨(SOMSSI)가 준비 중인 가야금·한복 관광상품(판매 예정) 안내는 {{BOOKING_URL}} 참고!',
+            en: 'Our Songdo gayageum & Hanbok tourism program is coming soon: {{BOOKING_URL}}'
           }
         }
       ],
-      igCaption: `[한국 전통문화 이야기: ${shortHeadline}] 빠르게 흘러가는 일상 속에서 한국 전통 문화가 지닌 큰 매력은 '비움과 여운'이에요. 오동나무 울림통과 명주실 12줄, 기러기 발 모양의 안족으로 이루어진 가야금은 피크 없이 맨손끝으로 줄을 뜯고 왼손으로 '농현'을 더해 깊은 숨결을 담아냅니다.\n\nExploring "${sanitizeTrendText(trend.title, 50)}"? Played with bare fingertips on 12 silk strings over paulownia wood, the gayageum celebrates the space between notes. Discover Korean traditional culture with SOMSSI in Songdo: {{BOOKING_URL}}`,
-      threadsText: `Thinking about "${sanitizeTrendText(trend.title, 60)}"—did you know the traditional Korean 12-string #gayageum (가야금) is played with bare fingertips rather than picks, resting silk strings on bridges shaped like wild-goose feet (안족)? We share these stories from Songdo ({{BOOKING_URL}}). What traditional craft fascinates you most?`,
+      igCaption: `[한국 전통문화 이야기: ${shortHeadline}] 빠르게 흘러가는 일상 속에서 한국 전통 문화가 지닌 큰 매력은 '비움과 여운'이에요. 오동나무 울림통과 명주실 12줄, 기러기 발 모양의 안족으로 이루어진 가야금은 피크 없이 맨손끝으로 줄을 뜯고 왼손으로 '농현'을 더해 깊은 숨결을 담아냅니다. 송도에서 곧 선보일 솜씨(SOMSSI)의 신규 가야금·한복 관광상품(판매 예정)도 기대해 주세요.\n\nExploring "${sanitizeTrendText(trend.title, 45)}"? Played with bare fingertips on 12 silk strings, the gayageum celebrates the space between notes. SOMSSI's new cultural tourism class in Songdo is coming soon: {{BOOKING_URL}}`,
+      threadsText: `Thinking about "${sanitizeTrendText(trend.title, 55)}"—did you know the traditional Korean 12-string #gayageum (가야금) is played with bare fingertips rather than picks, resting silk strings on bridges shaped like wild-goose feet (안족)? We are preparing a new hands-on tourism program in Songdo (Coming Soon: {{BOOKING_URL}}). What traditional craft fascinates you most?`,
       blogTitle: `한국 전통 문화 ${sanitizeTrendText(trend.title, 24)} 이야기`.slice(0, 39),
       blogKeywords: ['한국 전통 문화', '가야금', '한복 체험', '송도 가볼만한곳', '인천 문화예술', '외국인 한국문화체험']
     }
@@ -528,11 +528,11 @@ function generateCultureMagazineDraft(input, groundTruth, score, skip) {
     },
     {
       h2: '오동나무와 명주실 12줄이 전하는 한국 고유의 소리, 가야금과 한복 이야기',
-      body: `한국의 전통 예술과 미학을 이야기할 때 빼놓을 수 없는 상징이 바로 자연스러운 곡선미를 지닌 전통 의복 **한복**과 12현 전통 현악기 **가야금**이에요. 가야금은 속을 비워낸 오동나무 울림통 위에 명주실 12줄과 기러기 발 모양의 나무 기둥인 안족(雁足)을 얹어 만드는데, 인위적인 피크를 쓰지 않고 오른손 끝으로 직접 줄을 뜯고 왼손으로 줄을 지그시 누르거나 흔드는 **농현(弄絃)** 기법을 통해 자연의 바람과 물결을 닮은 깊은 여운을 만들어내요. 최근 다양한 K-컬처 음악과 예술 무대에서도 이러한 국악 현악기의 독창적인 음색이 자주 조명되면서, 귀로만 듣던 한국의 소리를 직접 손끝으로 뜯어보고 한복의 단아한 실루엣을 경험하려는 국내외 여행객들의 발길이 꾸준히 이어지고 있어요.`
+      body: `한국의 전통 예술과 미학을 이야기할 때 빼놓을 수 없는 상징이 바로 자연스러운 곡선미를 지닌 전통 의복 **한복**과 12현 전통 현악기 **가야금**이에요. 가야금은 속을 비워낸 오동나무 울림통 위에 명주실 12줄과 기러기 발 모양의 나무 기둥인 안족(雁足)을 얹어 만드는데, 인위적인 피크를 쓰지 않고 오른손 끝으로 직접 줄을 뜯고 왼손으로 줄을 지그시 누르거나 흔드는 **농현(弄絃)** 기법을 통해 자연의 바람과 물결을 닮은 깊은 여운을 만들어내요. 최근 다양한 K-컬처 음악과 예술 무대에서도 이러한 국악 현악기의 독창적인 음색이 자주 조명되면서, 귀로만 듣던 한국의 소리를 직접 손끝으로 뜯어보고 한복의 단아한 실루엣을 경험하려는 국내외 여행객들의 관심이 꾸준히 높아지고 있어요.`
     },
     {
-      h2: '송도 센트럴파크 인근에서 만나는 솜씨(SOMSSI) 문화 큐레이션 및 이용 안내',
-      body: `저희 **솜씨(SOMSSI)**는 인천 송도 센트럴파크 인근(인천국제공항에서 택시 또는 공항리무진 약 ${airportMin}분 거리)에서 한국 전통 문화와 인천 지역의 아름다운 문화·예술·관광 소식을 정기적으로 전하고 있어요. 매주 정기적으로 운영되는 **솜씨(SOMSSI) 가야금·한복 원데이클래스**(총 120분 소요, 한복 착용·전통 다과 및 차·자체 교재 《줄을 다루는 솜씨》를 활용한 아리랑 주선율 레슨 포함, 1인 99,000 KRW 부가세 포함, 한국어·영어 동시 진행)를 통해 악보를 전혀 읽지 못하는 음악 입문자와 6시간 이상 여유가 있는 인천공항 환승객(공항 밖으로 나가기 전 비자·K-ETA 요건을 꼭 확인하세요)도 부담 없이 한국의 대표 민요 아리랑을 완주하실 수 있어요. 호텔 컨시어지 및 인바운드 여행사 담당자분들께서도 인천 송도·개항장 관광 코스와 연계해 외국인 VIP 투숙객에게 안심하고 추천하실 수 있으며, 자세한 문화 가이드와 클래스 예약 안내는 {{BOOKING_URL}} 에서 언제든 확인하실 수 있어요.`
+      h2: '송도 센트럴파크 인근 신규 관광상품 《줄을 다루는 솜씨》 오픈 및 판매 예정 안내',
+      body: `저희 **솜씨(SOMSSI)**는 인천 송도 센트럴파크 인근(인천국제공항에서 택시 또는 공항리무진 약 ${airportMin}분 거리)에서 한국 전통 문화와 인천 지역의 아름다운 문화·예술·관광 소식을 전하면서, 국내외 여행객을 위한 특별한 문화관광 상품인 **솜씨(SOMSSI) 가야금·한복 원데이클래스(자체 교재 《줄을 다루는 솜씨》 기반)**의 정식 오픈을 준비하고 있어요(현재 상품 준비 중 · 곧 판매 예정). 총 120분 동안 한복 착용, 전통 다과 및 차 시음, 그리고 악보를 전혀 읽지 못하는 입문자와 6시간 이상 여유가 있는 인천공항 환승객(공항 밖으로 나가기 전 비자·K-ETA 요건을 꼭 확인하세요)도 한국어·영어(KR / EN) 안내로 한국의 대표 민요 아리랑 주선율을 직접 연주해 보는 올인클루시브 프로그램(1인 99,000 KRW 부가세 포함 정찰제 출시 예정)으로 기획되고 있어요. 호텔 컨시어지 및 인바운드 여행사 담당자분들께서도 향후 송도·개항장 관광 코스와 연계할 수 있는 신규 관광상품으로 미리 확인하실 수 있으며, 정식 판매 오픈 알림 및 사전 안내는 {{BOOKING_URL}} 에서 확인하실 수 있어요.`
     }
   ];
 
@@ -581,17 +581,17 @@ function generateCultureMagazineDraft(input, groundTruth, score, skip) {
     naver_blog: {
       title: cfg.blogTitle,
       sections: naverSections,
-      en_summary: `Inspired by "${sanitizeTrendText(trend.title, 70)}", discover Incheon's vibrant cultural landscape—from Songdo Central Park, Tri-bowl, and Songdo Hanok Village to the historic 19th-century Gaehangjang Open Port and Sinpo Market culinary scene. Near Songdo Central Park (about ${airportMin} minutes from Incheon Int'l Airport), SOMSSI also hosts a 120-minute gayageum, Hanbok, and traditional tea one-day class (99,000 KRW per person, VAT included; for 6+ hour layovers, check your visa / K-ETA eligibility before leaving the airport). Explore our cultural guide and booking details at {{BOOKING_URL}}.`,
+      en_summary: `Inspired by "${sanitizeTrendText(trend.title, 65)}", discover Incheon's vibrant cultural landscape—from Songdo Central Park, Tri-bowl, and Songdo Hanok Village to the historic 19th-century Gaehangjang Open Port and Sinpo Market culinary scene. Near Songdo Central Park (about ${airportMin} minutes from Incheon Int'l Airport), SOMSSI is preparing to launch an upcoming 120-minute gayageum, Hanbok, and traditional tea tourism class (Coming Soon — scheduled to open for sales at 99,000 KRW per person, VAT included; for 6+ hour layovers, check your visa / K-ETA eligibility before leaving the airport). Explore our cultural guide and pre-launch updates at {{BOOKING_URL}}.`,
       keywords: cfg.blogKeywords
     },
     facts_used: [
       { fact: `Trend topic integrated: ${sanitizeTrendText(trend.title, 80)} (${trend.source || 'Input'})`, source: 'rag' },
       { fact: 'Incheon cultural & tourism landmarks: Songdo Central Park, Hanok Village, Tri-bowl, Gaehangjang Open Port', source: 'rag' },
       { fact: 'Incheon culinary & traditional tea culture: Sinpo International Market, Chinatown, traditional Korean tea & dagwa', source: 'rag' },
-      { fact: 'SOMSSI studio location near Songdo Central Park (25 mins from Incheon Airport) & 120-min class info (99,000 KRW)', source: 'ground_truth' }
+      { fact: 'Product status: Coming Soon — SOMSSI 120-min class (99,000 KRW) near Songdo Central Park is currently in preparation and scheduled to open for sales', source: 'ground_truth' }
     ],
     reviewer_notes: [
-      `주간 편성 전략에 따라 문화·관광·예술 매거진 모드(${pillar})로 "${sanitizeTrendText(trend.title, 50)}" 트렌드를 반영해 작성되었으며, 하단에 송도 솜씨(SOMSSI) 가이드를 자연스럽게 연결했습니다.`
+      `주간 편성 전략에 따라 문화·관광·예술 매거진 모드(${pillar})로 "${sanitizeTrendText(trend.title, 50)}" 트렌드를 반영해 작성되었으며, 하단에 송도 솜씨(SOMSSI)의 신규 관광상품 《줄을 다루는 솜씨》(상품 판매 예정 / Coming Soon) 소식을 자연스럽게 연결했습니다.`
     ]
   };
 }
@@ -619,55 +619,55 @@ export function generateRuleCompliantDraft(input, groundTruth = loadGroundTruth(
     return generateCultureMagazineDraft(input, groundTruth, score, skip);
   }
 
-  const shortHeadline = sanitizeTrendText(trend.title, 26) || '송도 가야금 원데이클래스';
+  const shortHeadline = sanitizeTrendText(trend.title, 26) || '송도 가야금 신규 관광상품';
   const shortSummary = sanitizeTrendText(trend.summary || trend.title, 70);
   const isKoreanTrend = /[가-힣]/.test(trend.title || '');
   const isLayoverFocused =
     skip || /layover|transit|환승|경유|공항|airport/i.test(`${trend.title} ${trend.summary}`);
 
   const angle = skip
-    ? `Today's trend has low relevance to traditional music (score ${score}/10), so we pivot to an evergreen theme: how travelers with a ${minLayover}+ hour Incheon Airport layover or a quiet day in Songdo can wear Hanbok, sip traditional tea, and learn to play "Arirang" on the 12-string gayageum in 120 minutes.`
-    : `[주 2회 정기 클래스 알림] Connecting "${sanitizeTrendText(trend.title, 70)}" directly to SOMSSI's 120-minute gayageum & Hanbok class (《줄을 다루는 솜씨》) in Songdo, where visitors pluck the 12 silk strings themselves and learn "Arirang".`;
+    ? `Today's trend has low relevance to traditional music (score ${score}/10), so we pivot to an evergreen pre-launch preview: introducing how travelers with a ${minLayover}+ hour Incheon Airport layover or a quiet day in Songdo will soon be able to wear Hanbok, sip traditional tea, and learn "Arirang" in 120 minutes (Coming Soon / 상품 판매 예정).`
+    : `[주 2회 신규 관광상품 출시 예고] Connecting "${sanitizeTrendText(trend.title, 65)}" to SOMSSI's upcoming 120-minute gayageum & Hanbok tourism product (《줄을 다루는 솜씨》 — Coming Soon / 상품 판매 예정) in Songdo, introducing what this new cultural experience will offer when sales open.`;
 
   const reelsCaption = isLayoverFocused
-    ? `${minLayover}h+ Incheon layover? 25m to Songdo for gayageum & Hanbok! Check your visa / K-ETA eligibility before leaving the airport. {{BOOKING_URL}}`
-    : `Hear Korean strings in Songdo! Wear Hanbok & learn "Arirang" on the 12-string gayageum in 120 mins. Book via {{BOOKING_URL}}`;
+    ? `${minLayover}h+ Incheon layover? New Songdo gayageum & Hanbok class coming soon! Check your visa / K-ETA eligibility before leaving the airport. {{BOOKING_URL}}`
+    : `New in Songdo! Our 120-min gayageum & Hanbok tourism class is coming soon (scheduled for sale). Pre-launch info: {{BOOKING_URL}}`;
 
   const igCaption = isLayoverFocused
-    ? `긴 인천공항 환승 시간(${minLayover}시간 이상)이나 송도 여행 중 특별한 한국 문화를 경험하고 싶다면(${shortHeadline}), 송도 센트럴파크 인근 솜씨(SOMSSI)에서 120분 동안 한복을 입고 전통 다과와 차를 즐기며 12현 가야금으로 '아리랑' 주선율을 직접 연주해 보세요. 공항 밖으로 나가기 전 비자·K-ETA 요건을 꼭 확인하세요.\n\nHave a ${minLayover}+ hour layover at Incheon Int'l Airport or exploring Songdo? Just ${airportMin} minutes away by taxi or airport limousine, join SOMSSI for a 120-minute session (including Hanbok fitting, traditional tea & refreshments, and lesson) for 99,000 KRW per person (VAT included). Check your visa / K-ETA eligibility before leaving the airport. Book: {{BOOKING_URL}}`
-    : `[트렌드 포커스: ${shortHeadline}] 최근 한국 전통 현악기 사운드에 매력을 느끼셨나요? 인천 송도 센트럴파크 인근 솜씨(SOMSSI) 가야금·한복 원데이클래스에서 120분 동안 한복 착용과 전통 다과·차를 즐기며 자체 교재 《줄을 다루는 솜씨》로 '아리랑' 주선율을 배워보세요. 악보를 읽지 못하는 입문자도 참여할 수 있어요.\n\nCurious about the resonant sound of the 12-string gayageum? In Songdo, Incheon (about ${airportMin} minutes from Incheon Int'l Airport), spend 120 minutes in Hanbok with traditional tea and learn to play "Arirang" for 99,000 KRW per person, VAT included. Reserve at {{BOOKING_URL}}`;
+    ? `[신규 관광상품 오픈 예정] 긴 인천공항 환승 시간(${minLayover}시간 이상)이나 송도 여행 중 특별한 한국 문화를 경험하고 싶다면(${shortHeadline}), 송도 센트럴파크 인근 솜씨(SOMSSI)가 새롭게 선보일 120분 가야금·한복·전통 다과 문화관광 상품 《줄을 다루는 솜씨》(상품 판매 예정)를 주목해 주세요! 공항 밖으로 나가기 전 비자·K-ETA 요건을 꼭 확인하세요.\n\nHave a ${minLayover}+ hour layover at Incheon Int'l Airport? Just ${airportMin} mins away in Songdo, SOMSSI's upcoming 120-minute gayageum, Hanbok & tea tourism class (99,000 KRW, VAT included) is coming soon! Check your visa / K-ETA eligibility before leaving the airport. Info: {{BOOKING_URL}}`
+    : `[신규 관광상품 예고: ${shortHeadline}] 인천 송도 센트럴파크 인근에 한국 전통 현악기 가야금과 한복, 전통 다과를 한 번에 경험하는 새로운 문화관광 상품 《줄을 다루는 솜씨》(솜씨 가야금·한복 원데이클래스)가 곧 찾아옵니다! 현재 오픈 준비 중이며 곧 정식 판매 예정으로, 악보를 못 읽는 입문자도 120분 만에 '아리랑'을 연주할 수 있도록 기획되었어요.\n\nComing soon to Songdo, Incheon (about ${airportMin} mins from Incheon Int'l Airport)! Our upcoming 120-minute gayageum, Hanbok & tea tourism class (scheduled at 99,000 KRW per person, VAT included) will open for sales soon. Pre-launch updates: {{BOOKING_URL}}`;
 
   const naverSections = [
     {
       h2: skip
-        ? '인천 송도 가볼만한곳, 날씨와 계절에 구애받지 않는 실내 한국문화체험'
-        : `오늘의 K-컬처 트렌드(${shortHeadline})와 한국 전통 현악기 로컬 체험`,
+        ? '인천 송도 가볼만한곳, 새롭게 선보일 실내 한국문화 관광상품 프리뷰'
+        : `오늘의 K-컬처 트렌드(${shortHeadline})와 송도 신규 전통문화 관광상품 예고`,
       body: skip
-        ? `인천 송도를 찾는 외국인 개별 여행객(FIT)이나 인천국제공항에서 ${minLayover}시간 이상 긴 환승 시간을 보내는 여행객들에게 가장 큰 고민은 이동 부담이 적으면서도 한국적인 정취를 깊이 있게 느낄 수 있는 코스를 찾는 일이에요. 공항 밖으로 나가기 전 비자·K-ETA 요건을 꼭 확인하세요. 송도 센트럴파크 인근에 자리한 **솜씨(SOMSSI) 가야금·한복 원데이클래스**는 인천국제공항에서 택시 또는 공항리무진으로 약 ${airportMin}분 거리에 위치해 접근성이 뛰어나고, 쾌적한 실내 공간에서 진행되어 비 오는 날이나 무더위, 추위에도 안정적인 일정을 소화할 수 있어요. 단순한 관람이나 사진 촬영에 그치지 않고 직접 한국의 소리와 의복, 다과를 오감으로 경험할 수 있는 인천 이색체험 프로그램이에요.`
-        : `최근 **${sanitizeTrendText(trend.title, 48)}** 흐름(${shortSummary})에서 볼 수 있듯, 단순한 랜드마크 방문을 넘어 한국의 전통 사운드와 공예, 로컬 문화를 직접 손으로 경험하려는 외국인 여행객들의 관심이 높아지고 있어요. 특히 우아한 현악 선율에 매력을 느낀 해외 여행객과 국내 체류 외국인들은 한국 고유 12현 현악기인 가야금을 직접 보고 연주해 볼 수 있는 가야금 원데이클래스를 적극적으로 찾고 있어요. 인천 송도 센트럴파크 인근에서 운영되는 **솜씨(SOMSSI) 가야금·한복 원데이클래스**는 인천국제공항에서 택시 또는 공항리무진으로 약 ${airportMin}분이면 닿을 수 있어 송도 가볼만한곳을 찾는 여행객은 물론 ${minLayover}시간 이상 여유가 있는 환승객에게도 알맞은 외국인 한국문화체험이에요. 공항 밖으로 나가기 전 비자·K-ETA 요건을 꼭 확인하세요.`
+        ? `인천 송도를 찾는 외국인 개별 여행객(FIT)이나 인천국제공항에서 ${minLayover}시간 이상 긴 환승 시간을 보내는 여행객들에게 가장 큰 고민은 이동 부담이 적으면서도 한국적인 정취를 깊이 있게 느낄 수 있는 코스를 찾는 일이에요. 공항 밖으로 나가기 전 비자·K-ETA 요건을 꼭 확인하세요. 이러한 여행객들을 위해 송도 센트럴파크 인근(인천국제공항에서 택시 또는 공항리무진 약 ${airportMin}분 거리)에서 한복과 전통 다과, 그리고 12현 가야금 연주를 한자리에서 경험할 수 있는 새로운 문화관광 상품인 **솜씨(SOMSSI) 가야금·한복 원데이클래스**가 현재 오픈을 준비하고 있어요(상품 판매 예정). 쾌적한 실내 공간에서 날씨와 계절에 구애받지 않고 한국의 소리와 의복, 다과를 오감으로 만날 수 있도록 기획된 신규 인천 이색체험 프로그램이에요.`
+        : `최근 **${sanitizeTrendText(trend.title, 48)}** 흐름(${shortSummary})에서 볼 수 있듯, 단순한 랜드마크 방문을 넘어 한국의 전통 사운드와 공예, 로컬 문화를 직접 손으로 경험하려는 국내외 여행객들의 관심이 높아지고 있어요. 이러한 흐름에 발맞추어 인천 송도 센트럴파크 인근(인천국제공항에서 택시 또는 공항리무진 약 ${airportMin}분 거리)에서 한국 고유 12현 현악기인 가야금과 한복, 전통 다과를 함께 경험하는 새로운 문화관광 상품인 **솜씨(SOMSSI) 가야금·한복 원데이클래스**가 현재 정식 오픈을 준비하고 있어요(곧 상품 판매 예정). 송도 가볼만한곳을 찾는 여행객은 물론 ${minLayover}시간 이상 여유가 있는 환승객에게도 특별한 한국문화체험 코스가 될 예정이에요. 공항 밖으로 나가기 전 비자·K-ETA 요건을 꼭 확인하세요.`
     },
     {
-      h2: '악보를 몰라도 괜찮아요, 자체 교재 《줄을 다루는 솜씨》로 배우는 아리랑',
-      body: `현악기를 처음 접하는 분들도 걱정할 필요가 없어요. 솜씨(SOMSSI) 클래스는 음악적 배경지식이 전혀 없는 입문자를 위해 자체 제작한 교재 **《줄을 다루는 솜씨》**를 바탕으로 수업을 진행해요. 복잡한 오선보 대신 직관적인 가이드에 따라 오동나무 울림통 위 명주실 12줄을 오른손 끝으로 뜯고, 기러기 발 모양의 안족 위에서 왼손으로 줄을 누르며 여운을 만드는 기본 주법을 차근차근 익힐 수 있어요. 한국어와 영어(KR / EN)로 친절하게 안내가 이루어지기 때문에 외국인 참가자도 부담 없이 따라오며 한국의 대표 민요인 **아리랑**의 주선율을 직접 연주하는 성취감을 느낄 수 있답니다.`
+      h2: '악보를 몰라도 괜찮아요, 출시 준비 중인 자체 교재 《줄을 다루는 솜씨》 이야기',
+      body: `현악기를 처음 접하는 분들도 걱정 없이 참여할 수 있도록 세심한 커리큘럼을 준비하고 있어요. 곧 선보일 솜씨(SOMSSI) 클래스는 음악적 배경지식이 전혀 없는 입문자와 외국인 여행객을 위해 자체 기획·제작 중인 교재 **《줄을 다루는 솜씨》**를 바탕으로 진행될 예정이에요. 복잡한 오선보 대신 직관적인 가이드에 따라 오동나무 울림통 위 명주실 12줄을 오른손 끝으로 뜯고, 기러기 발 모양의 안족 위에서 왼손으로 줄을 누르며 여운을 만드는 기본 주법을 차근차근 익히도록 구성했어요. 한국어와 영어(KR / EN) 동시 안내를 통해 참가자 누구나 한국의 대표 민요인 **아리랑**의 주선율을 직접 연주하는 성취감을 느낄 수 있도록 막바지 준비에박차를 가하고 있답니다.`
     },
     {
-      h2: '120분 동안 여유롭게 즐기는 한복·전통 다과·가야금 원데이클래스 흐름',
-      body: `전체 프로그램은 한복 착용을 포함해 총 **120분** 동안 체계적이고 여유로운 흐름으로 구성되어 있어요.\n- **웰컴 티타임 및 한복 착용**: 수업 공간에 도착하면 전통 차와 다과를 즐기며 단아한 한복을 골라 입어요.\n- **가야금 구조 이해와 기초 주법 연습**: 자체 교재 《줄을 다루는 솜씨》를 활용해 12현 가야금의 구조와 손가락 자세를 배워요.\n- **아리랑 주선율 단계별 레슨**: 강사의 한·영 안내에 맞춰 한 소절씩 아리랑 멜로디를 연결해 연주해요.\n- **연주 기록 및 포토타임**: 한복을 입고 가야금을 연주하는 모습을 사진과 영상으로 남기며 특별한 추억을 완성해요.`
+      h2: '120분 동안 여유롭게 즐기는 한복·전통 다과·가야금 관광상품 구성 미리보기',
+      body: `정식 판매 오픈을 앞둔 전체 프로그램은 한복 착용을 포함해 총 **120분** 동안 체계적이고 여유로운 4단계 흐름으로 구성되어 있어요.\n- **웰컴 티타임 및 한복 착용**: 공간에 도착하면 따뜻한 전통 차와 정갈한 다과를 즐기며 단아한 한복을 골라 입어요.\n- **가야금 구조 이해와 기초 주법 연습**: 자체 교재 《줄을 다루는 솜씨》를 활용해 12현 가야금의 구조와 손가락 자세를 배워요.\n- **아리랑 주선율 단계별 레슨**: 강사의 한·영 안내에 맞춰 한 소절씩 아리랑 멜로디를 연결해 연주해요.\n- **연주 기록 및 포토타임**: 한복을 입고 가야금을 연주하는 모습을 사진과 영상으로 남기며 특별한 한국 여행의 추억을 완성해요.`
     },
     {
-      h2: '이용 안내 및 호텔 컨시어지·여행사 B2B 추천 포인트와 예약 방법',
-      body: `솜씨(SOMSSI) 가야금·한복 원데이클래스의 투명한 이용 조건과 포함 내역을 안내해 드려요.\n- **상품명**: 솜씨(SOMSSI) 가야금·한복 원데이클래스 (SOMSSI Gayageum & Hanbok One-Day Class)\n- **위치**: 인천 송도 — 송도 센트럴파크 인근 (인천국제공항에서 택시 또는 공항리무진 약 ${airportMin}분)\n- **소요 시간**: 120분 (한복 착용 포함)\n- **이용 요금**: 1인 99,000 KRW (부가세 포함)\n- **포함 내역**: 수업 중 가야금 대여, 한복 대여, 전통 차 및 다과, 가야금 레슨\n- **진행 언어**: 한국어 / 영어 (KR / EN)\n\n호텔 컨시어지 및 인바운드 여행사 담당자분들께서는 120분 정시 운영과 추가 비용 없는 올인클루시브 정찰가(1인 99,000원, 부가세 포함), 그리고 한·영 진행 시스템을 갖추고 있어 외국인 VIP 투숙객이나 소규모 FIT 고객에게 안심하고 추천하실 수 있어요. 수업 일정 확인 및 예약은 {{BOOKING_URL}} 에서 바로 진행하실 수 있어요.`
+      h2: '상품 판매 예정 안내 및 호텔 컨시어지·여행사 B2B 사전 제휴·오픈 알림 안내',
+      body: `현재 오픈 준비 중인 **솜씨(SOMSSI) 가야금·한복 원데이클래스**의 출시 예정 스펙과 구성을 미리 안내해 드려요.\n- **상품명**: 솜씨(SOMSSI) 가야금·한복 원데이클래스 (SOMSSI Gayageum & Hanbok One-Day Class)\n- **판매 상태**: 현재 오픈 준비 중 · 곧 정식 상품 판매 예정 (Coming Soon)\n- **위치**: 인천 송도 — 송도 센트럴파크 인근 (인천국제공항에서 택시 또는 공항리무진 약 ${airportMin}분)\n- **소요 시간**: 120분 (한복 착용 포함)\n- **출시 예정 요금**: 1인 99,000 KRW (부가세 포함 정찰제)\n- **포함 내역**: 수업 중 가야금 대여, 한복 대여, 전통 차 및 다과, 가야금 레슨\n- **진행 언어**: 한국어 / 영어 (KR / EN)\n\n호텔 컨시어지 및 인바운드 여행사 담당자분들께서는 120분 정시 운영과 추가 비용 없는 올인클루시브 정찰가(1인 99,000원, 부가세 포함), 그리고 한·영 진행 시스템을 갖춘 신규 문화관광 상품으로 향후 외국인 VIP 투숙객 및 FIT 투어 코스에 미리 기획·연계하실 수 있어요. 정식 상품 판매 오픈 알림 신청과 사전 안내는 {{BOOKING_URL}} 에서 확인하실 수 있어요.`
     }
   ];
 
   const reviewerNotes = [];
   if (skip) {
     reviewerNotes.push(
-      `Input trend "${trend.title}" scored ${score}/10 (< 5), so skip=true was set and evergreen Songdo/layover content was generated per Section 5.`
+      `Input trend "${trend.title}" scored ${score}/10 (< 5), so skip=true was set and evergreen Songdo/layover pre-launch teaser content (상품 판매 예정) was generated per Section 5.`
     );
   } else {
     reviewerNotes.push(
-      `[정기 클래스 모드] 입력 트렌드 "${sanitizeTrendText(trend.title, 48)}"(적합도 ${score}/10)를 반영해 4개 채널 초안을 생성했습니다.`
+      `[신규 관광상품 출시 예고 모드] 입력 트렌드 "${sanitizeTrendText(trend.title, 48)}"(적합도 ${score}/10)를 반영해 《줄을 다루는 솜씨》 상품이 현재 준비 중이며 곧 판매 예정(Coming Soon)임을 알리는 4개 채널 초안을 생성했습니다.`
     );
   }
 
@@ -681,21 +681,21 @@ export function generateRuleCompliantDraft(input, groundTruth = loadGroundTruth(
     reels: {
       hook: {
         kr: skip
-          ? '송도에서 120분 만에 가야금 아리랑 연주하기'
+          ? '송도 120분 가야금·한복 관광상품 오픈 예정!'
           : isKoreanTrend
             ? sanitizeTrendText(trend.title, 36)
-            : '송도에서 120분 만에 가야금 아리랑 연주하기',
+            : '송도 120분 가야금·한복 관광상품 오픈 예정!',
         en: skip
-          ? 'Play Korean gayageum in 120 mins!'
+          ? 'New Songdo Gayageum Class Soon!'
           : !isKoreanTrend
             ? sanitizeTrendText(trend.title, 36)
-            : 'Play Korean gayageum in 120 mins!'
+            : 'New Songdo Gayageum Class Soon!'
       },
       onscreen_text: [
         skip ? '25 mins from Incheon Airport' : sanitizeTrendText(trend.title, 28) || '25 mins from Incheon Airport',
         'Wear Hanbok & sip Korean tea',
         'Learn Arirang on 12 strings',
-        '99,000 KRW all-inclusive'
+        '99,000 KRW · Coming Soon!'
       ],
       caption: reelsCaption,
       hashtags: [
@@ -712,12 +712,12 @@ export function generateRuleCompliantDraft(input, groundTruth = loadGroundTruth(
       cards: [
         {
           title: {
-            kr: skip ? '12줄 명주실의 깊은 울림' : sanitizeTrendText(trend.title, 18) || '12줄 명주실의 깊은 울림',
-            en: '12 Silk Strings'
+            kr: skip ? '송도 신규 문화관광 상품' : sanitizeTrendText(trend.title, 18) || '송도 신규 문화관광 상품',
+            en: 'New Tour Coming Soon'
           },
           body: {
-            kr: '인천 송도 센트럴파크 인근에서 직접 손끝으로 뜯어보는 한국 전통 가야금 원데이클래스예요.',
-            en: 'Pluck the traditional 12-string gayageum yourself near Songdo Central Park.'
+            kr: '인천 송도 센트럴파크 인근에서 곧 선보일 한국 전통 가야금·한복 문화관광 상품이에요(판매 예정).',
+            en: 'A new 12-string gayageum & Hanbok tourism program coming soon to Songdo.'
           }
         },
         {
@@ -727,8 +727,8 @@ export function generateRuleCompliantDraft(input, groundTruth = loadGroundTruth(
           },
           body: {
             kr: isLayoverFocused
-              ? `인천공항에서 약 ${airportMin}분! ${minLayover}시간 이상 환승객과 여행객을 위한 실내 체험이에요.`
-              : `${shortSummary.slice(0, 48)} 송도 실내 공간에서 직접 배워볼 수 있어요.`,
+              ? `인천공항에서 약 ${airportMin}분! ${minLayover}시간 이상 환승객과 여행객을 위해 준비 중인 실내 코스예요.`
+              : `${shortSummary.slice(0, 44)} 송도에서 직접 배워볼 수 있는 상품이 준비 중이에요.`,
             en: isLayoverFocused
               ? `About ${airportMin} mins from Incheon Airport—ideal for ${minLayover}h+ layovers.`
               : 'Go beyond listening and experience Korean traditional string music hands-on.'
@@ -740,18 +740,18 @@ export function generateRuleCompliantDraft(input, groundTruth = loadGroundTruth(
             en: '120 Mins All-In-One'
           },
           body: {
-            kr: '한복 착용과 전통 다과·차, 자체 교재 《줄을 다루는 솜씨》로 배우는 아리랑 레슨까지 포함돼요.',
+            kr: '한복 착용과 전통 다과·차, 자체 교재 《줄을 다루는 솜씨》로 배우는 아리랑 코스예요(오픈 준비 중).',
             en: 'Includes Hanbok fitting, traditional tea & refreshments, and playing "Arirang".'
           }
         },
         {
           title: {
-            kr: '1인 99,000원 예약 안내',
-            en: '99,000 KRW / Person'
+            kr: '1인 99,000원 판매 예정',
+            en: 'Coming Soon · 99K'
           },
           body: {
-            kr: '부가세 포함 정찰가, 한·영 진행! 지금 프로필의 {{BOOKING_URL}} 에서 예약하세요.',
-            en: 'VAT included, taught in KR/EN. Book your session now at {{BOOKING_URL}}'
+            kr: '현재 오픈 준비 중이며 곧 정식 판매 예정이에요! 사전 안내는 {{BOOKING_URL}} 참고!',
+            en: 'Scheduled to open for sales soon! See pre-launch details at {{BOOKING_URL}}'
           }
         }
       ],
@@ -772,14 +772,16 @@ export function generateRuleCompliantDraft(input, groundTruth = loadGroundTruth(
       ]
     },
     threads: {
-      text: `Have you ever plucked a 12-string #gayageum (가야금) while wearing Hanbok? Following "${sanitizeTrendText(trend.title, 48)}", at SOMSSI near Songdo Central Park (about ${airportMin} mins from Incheon Int'l Airport), complete beginners sip traditional tea and learn to play "Arirang" in 120 minutes using 《줄을 다루는 솜씨》 (99,000 KRW, VAT included). Details at {{BOOKING_URL}} ✨ What Korean craft have you always wanted to try?`
+      text: isLayoverFocused
+        ? `Got a ${minLayover}h+ layover at Incheon Airport (${sanitizeTrendText(trend.title, 34)})? Check your visa / K-ETA eligibility before leaving the airport! Just ${airportMin} mins away in Songdo, SOMSSI is preparing a new 120-min #gayageum (가야금) & Hanbok tourism class using 《줄을 다루는 솜씨》 (Coming Soon, 99,000 KRW). Info: {{BOOKING_URL}} ✨ How do you spend long layovers?`
+        : `Have you ever wanted to pluck a 12-string #gayageum (가야금) while wearing Hanbok? Following "${sanitizeTrendText(trend.title, 44)}", SOMSSI is preparing a new 120-minute cultural tourism class near Songdo Central Park (about ${airportMin} mins from Incheon Airport) using our textbook 《줄을 다루는 솜씨》. Scheduled to open for sales soon (99,000 KRW, VAT included)—pre-launch info at {{BOOKING_URL}} ✨ What Korean craft would you love to try?`
     },
     naver_blog: {
       title: skip
-        ? '송도 가볼만한곳 솜씨 가야금·한복 120분 원데이클래스 안내'
-        : `송도 가볼만한곳 솜씨 가야금 원데이클래스 · ${sanitizeTrendText(trend.title, 14)}`.slice(0, 39),
+        ? '송도 가볼만한곳 솜씨 가야금·한복 관광상품 오픈·판매 예정 안내'
+        : `송도 가볼만한곳 솜씨 가야금 관광상품 판매예정 · ${sanitizeTrendText(trend.title, 11)}`.slice(0, 39),
       sections: naverSections,
-      en_summary: `SOMSSI offers a 120-minute gayageum and Hanbok one-day class near Songdo Central Park in Incheon, about ${airportMin} minutes from Incheon International Airport by taxi or airport limousine. Priced at 99,000 KRW per person (VAT included), the session includes gayageum use, Hanbok rental, traditional tea and refreshments, and a beginner-friendly lesson in Korean and English where guests learn to play "Arirang". It is suitable for independent travelers and transit passengers with layovers of ${minLayover} hours or more (check your visa / K-ETA eligibility before leaving the airport), and booking is available at {{BOOKING_URL}}.`,
+      en_summary: `SOMSSI is preparing to launch a new 120-minute gayageum and Hanbok cultural tourism class near Songdo Central Park in Incheon, about ${airportMin} minutes from Incheon International Airport by taxi or airport limousine (Coming Soon — scheduled to open for sales). Priced at 99,000 KRW per person (VAT included), the upcoming session will include gayageum use, Hanbok rental, traditional tea and refreshments, and a beginner-friendly lesson in Korean and English using our textbook 《줄을 다루는 솜씨》 where guests learn to play "Arirang". Designed for independent travelers and transit passengers with layovers of ${minLayover} hours or more (check your visa / K-ETA eligibility before leaving the airport), pre-launch updates and launch notifications are available at {{BOOKING_URL}}.`,
       keywords: [
         '송도 가볼만한곳',
         '인천 이색체험',
@@ -791,15 +793,16 @@ export function generateRuleCompliantDraft(input, groundTruth = loadGroundTruth(
     },
     facts_used: [
       { fact: 'Product name: SOMSSI Gayageum & Hanbok One-Day Class (솜씨 가야금·한복 원데이클래스)', source: 'ground_truth' },
-      { fact: "Curriculum basis: SOMSSI's own textbook 《줄을 다루는 솜씨》", source: 'ground_truth' },
+      { fact: 'Product status: Coming Soon — currently in preparation and scheduled to open for sales (상품 오픈 준비 중 · 판매 예정)', source: 'ground_truth' },
+      { fact: "Curriculum basis: SOMSSI's own textbook 《줄을 다루는 솜씨》 (in preparation for launch)", source: 'ground_truth' },
       { fact: 'Location: Songdo, Incheon — Near Songdo Central Park (about 25 minutes from Incheon Int\'l Airport by taxi or airport limousine)', source: 'ground_truth' },
       { fact: 'Duration: 120 minutes (including Hanbok fitting)', source: 'ground_truth' },
-      { fact: 'Price: 99,000 KRW per person, VAT included', source: 'ground_truth' },
+      { fact: 'Price: 99,000 KRW per person, VAT included (scheduled launch price)', source: 'ground_truth' },
       { fact: 'Included: Gayageum use during class, Hanbok rental, traditional tea & refreshments, lesson', source: 'ground_truth' },
       { fact: 'Outcome: Beginners with no musical background learn to play the main melody of "Arirang"', source: 'ground_truth' },
       { fact: 'Languages of instruction: KR / EN', source: 'ground_truth' },
       { fact: 'Layover eligibility: 6 hours or more + visa / K-ETA eligibility notice', source: 'ground_truth' },
-      { fact: '120-minute 4-stage session flow & B2B concierge recommendation points', source: 'rag' }
+      { fact: '120-minute 4-stage session flow & B2B concierge pre-launch preview points', source: 'rag' }
     ],
     reviewer_notes: reviewerNotes
   };
@@ -876,26 +879,26 @@ export function reviseRuleCompliantDraft(input, groundTruth = loadGroundTruth())
     output.reels = {
       ...prev.reels,
       hook: wantsShorter
-        ? { kr: '송도 120분 가야금·한복 체험', en: '120-min Gayageum in Songdo!' }
+        ? { kr: '송도 120분 가야금 관광상품 판매예정', en: 'Songdo Gayageum Class Soon!' }
         : wantsLayover
-          ? { kr: '인천공항 6시간+ 환승할 때 뭐하지?', en: '6h+ Incheon layover idea!' }
-          : { kr: '손끝으로 뜯는 12현 가야금 아리랑', en: 'Pluck Arirang on 12 silk strings!' },
+          ? { kr: '인천공항 6시간+ 환승 신규 코스 예고!', en: 'New 6h+ ICN layover idea!' }
+          : { kr: '곧 찾아올 12현 가야금 아리랑 클래스', en: 'Upcoming Arirang string class!' },
       caption: wantsLayover
-        ? '6h+ Incheon layover? 25m to Songdo for gayageum & Hanbok! Check your visa / K-ETA eligibility before leaving the airport. {{BOOKING_URL}}'
+        ? '6h+ Incheon layover? New Songdo gayageum class coming soon! Check your visa / K-ETA eligibility before leaving the airport. {{BOOKING_URL}}'
         : wantsShorter
-          ? '120-min gayageum & Hanbok class in Songdo (99,000 KRW). Book: {{BOOKING_URL}}'
-          : 'Try a 120-min gayageum, Hanbok & tea session in Songdo for 99,000 KRW! Book via {{BOOKING_URL}}'
+          ? 'Upcoming 120-min gayageum & Hanbok class in Songdo (99,000 KRW, Coming Soon): {{BOOKING_URL}}'
+          : 'New 120-min gayageum, Hanbok & tea tourism class in Songdo coming soon (99,000 KRW)! Info: {{BOOKING_URL}}'
     };
   } else if (channel === 'instagram_feed') {
     const cards = JSON.parse(JSON.stringify(prev.instagram_feed.cards));
     if (wantsShorter) {
       cards[0].body = {
-        kr: '송도 센트럴파크 인근에서 즐기는 120분 가야금·한복 원데이클래스예요.',
-        en: '120-min gayageum & Hanbok class near Songdo Central Park.'
+        kr: '송도 센트럴파크 인근에서 곧 판매 예정인 120분 가야금·한복 관광상품이에요.',
+        en: 'Upcoming 120-min gayageum & Hanbok class near Songdo Central Park.'
       };
     } else if (wantsLayover) {
       cards[1] = {
-        title: { kr: '6시간 이상 환승 추천', en: 'For 6h+ Layovers' },
+        title: { kr: '6시간+ 환승 신규 코스', en: 'For 6h+ Layovers' },
         body: {
           kr: '인천공항에서 약 25분! 공항 밖으로 나가기 전 비자·K-ETA 요건을 꼭 확인하세요.',
           en: '25m from ICN! Check your visa / K-ETA eligibility before leaving the airport.'
@@ -909,23 +912,23 @@ export function reviseRuleCompliantDraft(input, groundTruth = loadGroundTruth())
   } else if (channel === 'threads') {
     output.threads = {
       text: wantsShorter
-        ? 'Ever tried the 12-string #gayageum (가야금) in Hanbok? At SOMSSI in Songdo (25m from Incheon Airport), beginners sip Korean tea and learn to play "Arirang" in 120 mins for 99,000 KRW (VAT included). Check out {{BOOKING_URL}} — what Korean song would you love to hear on traditional strings?'
+        ? 'Ever wanted to try the 12-string #gayageum (가야금) in Hanbok? At SOMSSI in Songdo (25m from Incheon Airport), our upcoming 120-min tourism class (99,000 KRW, VAT included) is scheduled to open for sales soon! Pre-launch info at {{BOOKING_URL}} — what Korean song would you love to hear on traditional strings?'
         : wantsLayover
-          ? 'Got a 6+ hour layover at Incheon Int\'l Airport? Just 25 mins away in Songdo, you can wear Hanbok, sip traditional tea, and learn "Arirang" on the 12-string #gayageum (가야금) in 120 mins (99,000 KRW). Check your visa / K-ETA eligibility before leaving the airport! Info: {{BOOKING_URL}} — how do you spend long layovers?'
+          ? 'Got a 6+ hour layover at Incheon Int\'l Airport? Just 25 mins away in Songdo, SOMSSI is preparing a new 120-min #gayageum (가야금), Hanbok & tea tourism class (99,000 KRW, Coming Soon). Check your visa / K-ETA eligibility before leaving the airport! Info: {{BOOKING_URL}} — how do you spend long layovers?'
           : prev.threads.text
     };
   } else if (channel === 'naver_blog') {
     const updatedSections = JSON.parse(JSON.stringify(prev.naver_blog.sections));
     if (wantsB2B && updatedSections.length > 0) {
       updatedSections[updatedSections.length - 1].h2 =
-        '호텔 컨시어지·인바운드 여행사 B2B 추천 이유 및 이용·예약 안내';
+        '호텔 컨시어지·인바운드 여행사 B2B 사전 제휴 포인트 및 상품 판매 예정 안내';
     }
     output.naver_blog = {
       ...prev.naver_blog,
       title: wantsShorter
-        ? '송도 가볼만한곳 솜씨 가야금 원데이클래스'
+        ? '송도 가볼만한곳 솜씨 가야금 관광상품 판매예정'
         : wantsB2B
-          ? '외국인 한국문화체험 송도 솜씨 가야금 원데이클래스'
+          ? '외국인 한국문화체험 송도 솜씨 가야금 상품 판매예정'
           : prev.naver_blog.title,
       sections: updatedSections
     };
@@ -966,26 +969,26 @@ export function buildCompanionMediaExtras(output, input = {}, groundTruth = load
             body: `Crafted from hollowed paulownia wood and 12 twisted silk strings resting on wild-goose-foot bridges (**anjok**), the traditional Korean **gayageum** is plucked with bare right fingertips while the left hand shapes warm vibrato (**nonghyeon**)—inviting listeners and beginners alike into quiet mindfulness.`
           },
           {
-            h2: '4. Cultural Guide & SOMSSI One-Day Class in Songdo',
-            body: `Located near Songdo Central Park (about ${airportMin} minutes from Incheon Int'l Airport by taxi or airport limousine), **SOMSSI** curates local cultural stories and hosts a 120-minute Gayageum & Hanbok One-Day Class (99,000 KRW per person, VAT included; taught in KR/EN using our textbook 《줄을 다루는 솜씨》). Suitable for independent travelers and transit passengers with layovers of ${minLayover}+ hours (check your visa / K-ETA eligibility before leaving the airport). Learn more at {{BOOKING_URL}}.`
+            h2: '4. Upcoming Tourism Program: SOMSSI One-Day Class in Songdo (Coming Soon)',
+            body: `Located near Songdo Central Park (about ${airportMin} minutes from Incheon Int'l Airport by taxi or airport limousine), **SOMSSI** curates local cultural stories and is preparing to launch a new 120-minute Gayageum & Hanbok One-Day Class (**Coming Soon — scheduled to open for sales** at 99,000 KRW per person, VAT included; taught in KR/EN using our upcoming textbook 《줄을 다루는 솜씨》). Designed for independent travelers and transit passengers with layovers of ${minLayover}+ hours (check your visa / K-ETA eligibility before leaving the airport). See pre-launch details at {{BOOKING_URL}}.`
           }
         ]
       : [
           {
-            h2: `1. Hands-On Korean Music in Songdo (${sanitizeTrendText(trendTitleClean, 36)})`,
-            body: `Inspired by **"${trendTitleClean}"** (${trendSummaryClean}), travelers visiting Korea and transit guests with a ${minLayover}+ hour layover at Incheon International Airport (check your visa / K-ETA eligibility before leaving the airport) are increasingly looking for calm, indoor cultural experiences. Located near Songdo Central Park—about ${airportMin} minutes from the airport by taxi or airport limousine—**SOMSSI Gayageum & Hanbok One-Day Class** lets guests experience Korean strings, attire, and tea in one place.`
+            h2: `1. Upcoming Korean Music Tourism Experience in Songdo (${sanitizeTrendText(trendTitleClean, 30)})`,
+            body: `Inspired by **"${trendTitleClean}"** (${trendSummaryClean}), travelers visiting Korea and transit guests with a ${minLayover}+ hour layover at Incheon International Airport (check your visa / K-ETA eligibility before leaving the airport) are increasingly looking for calm, indoor cultural experiences. Located near Songdo Central Park—about ${airportMin} minutes from the airport by taxi or airport limousine—**SOMSSI Gayageum & Hanbok One-Day Class** is a new cultural tourism product **currently in preparation and scheduled to open for sales soon (Coming Soon)**.`
           },
           {
-            h2: '2. Learn "Arirang" with Our Beginner Textbook 《줄을 다루는 솜씨》',
-            body: `No musical background or sheet-music reading is required. Using SOMSSI's in-house textbook **《줄을 다루는 솜씨》**, instructors guide participants in Korean and English through plucking the 12 silk strings with bare fingertips and pressing the movable wooden bridges (**anjok**) to play the main melody of **"Arirang"**.`
+            h2: '2. Preview: Learn "Arirang" with Our Upcoming Textbook 《줄을 다루는 솜씨》',
+            body: `No musical background or sheet-music reading will be required. Using SOMSSI's upcoming in-house textbook **《줄을 다루는 솜씨》**, instructors will guide participants in Korean and English through plucking the 12 silk strings with bare fingertips and pressing the movable wooden bridges (**anjok**) to play the main melody of **"Arirang"**.`
           },
           {
-            h2: '3. The 120-Minute Session Flow: Hanbok, Tea & Gayageum',
+            h2: '3. Planned 120-Minute Session Flow: Hanbok, Tea & Gayageum',
             body: `- **Welcome Tea & Hanbok Fitting (25 min)**: Enjoy traditional Korean tea and refreshments while choosing your Hanbok.\n- **Gayageum Basics (30 min)**: Learn posture and basic plucking techniques.\n- **Step-by-Step "Arirang" Lesson (45 min)**: Connect each phrase of Arirang at a comfortable pace.\n- **Performance Recording & Photo Time (20 min)**: Capture photos and videos playing the gayageum in Hanbok.`
           },
           {
-            h2: '4. All-Inclusive Pricing, B2B Concierge Info & Booking',
-            body: `- **Product**: SOMSSI Gayageum & Hanbok One-Day Class\n- **Location**: Songdo, Incheon — Near Songdo Central Park\n- **Duration**: 120 minutes (including Hanbok fitting)\n- **Price**: 99,000 KRW per person, VAT included\n- **Included**: Gayageum use during class, Hanbok rental, traditional tea & refreshments, lesson\n\nHotel concierges and travel agencies can confidently recommend this fixed-schedule, all-inclusive session to international guests. Reserve directly at {{BOOKING_URL}}.`
+            h2: '4. Coming Soon Sales Info, Planned Pricing & B2B Preview',
+            body: `- **Product**: SOMSSI Gayageum & Hanbok One-Day Class\n- **Status**: Coming Soon (Currently in preparation · Scheduled to open for sales)\n- **Location**: Songdo, Incheon — Near Songdo Central Park\n- **Duration**: 120 minutes (including Hanbok fitting)\n- **Planned Price**: 99,000 KRW per person, VAT included\n- **Included**: Gayageum use during class, Hanbok rental, traditional tea & refreshments, lesson\n\nHotel concierges and travel agencies can preview this upcoming fixed-schedule, all-inclusive tourism product for international guests. Check launch updates at {{BOOKING_URL}}.`
           }
         ];
 
@@ -999,8 +1002,8 @@ export function buildCompanionMediaExtras(output, input = {}, groundTruth = load
     const photoGuides = [
       '추천 실사: 송도 스튜디오 자연광 아래 놓인 12현 가야금 안족(기러기발)과 명주실 클로즈업 컷 (또는 송도 센트럴파크 한옥마을 전경)',
       '추천 실사: 송도 센트럴파크 수로/트라이보울 풍경 또는 한복 소매 끝이 가야금 현 위에 얹힌 감성 컷',
-      '추천 실사: 정갈한 전통 다과(약과·다식)와 따뜻한 찻잔, 그리고 교재 《줄을 다루는 솜씨》가 함께 보이는 테이블 컷',
-      '추천 실사: 한복을 입고 가야금을 연주하는 측면 실루엣 또는 스튜디오 안내 사인보드 컷'
+      '추천 실사: 정갈한 전통 다과(약과·다식)와 따뜻한 찻잔, 그리고 준비 중인 교재 《줄을 다루는 솜씨》가 함께 보이는 테이블 컷',
+      '추천 실사: 한복을 입고 가야금을 조율하는 티저 실루엣 또는 스튜디오 Coming Soon 안내 사인보드 컷'
     ];
     const aiPrompts = [
       'Editorial travel photography of a serene Korean studio in Songdo Incheon, warm natural sunlight on traditional wooden architecture and silk textures, minimalist Korean aesthetic, 4k, no text',
@@ -1026,20 +1029,20 @@ export function buildCompanionMediaExtras(output, input = {}, groundTruth = load
       i === 0
         ? output.naver_blog.title
         : i === 1
-          ? '인천 로컬 미식 & 전통 다과·교재 이야기'
+          ? '인천 로컬 미식 & 출시 준비 중인 《줄을 다루는 솜씨》'
           : i === 2
-            ? '120분 프로그램 흐름 · 한복 & 가야금 아리랑'
-            : '솜씨(SOMSSI) 이용 안내 · 1인 99,000원 정찰제',
+            ? '120분 프로그램 구성 미리보기 · 한복 & 가야금 아리랑'
+            : '솜씨(SOMSSI) 신규 관광상품 · 1인 99,000원 판매 예정',
     bannerSubtitleEn:
-      enBlogSections[i]?.h2 || 'SOMSSI Songdo Gayageum & Korean Culture Guide',
+      enBlogSections[i]?.h2 || 'SOMSSI Songdo Gayageum & Korean Culture Guide (Coming Soon)',
     photoGuide:
       i === 0
         ? '대표 썸네일 / 섹션 1: 송도 센트럴파크 한옥마을 또는 스튜디오 전경 사진'
         : i === 1
-          ? '섹션 2: 자체 교재 《줄을 다루는 솜씨》 또는 인천 로컬 미식·전통 다과 클로즈업'
+          ? '섹션 2: 준비 중인 자체 교재 《줄을 다루는 솜씨》 또는 인천 로컬 미식·전통 다과 클로즈업'
           : i === 2
-            ? '섹션 3: 120분 4단계 타임테이블 인포그래픽 카드 (우측 다운로드 버튼으로 즉시 생성 가능)'
-            : '섹션 4: 포함내역·소요시간·위치 요약 인포그래픽 카드',
+            ? '섹션 3: 출시 예정 120분 4단계 타임테이블 인포그래픽 카드 (우측 다운로드 버튼으로 즉시 생성 가능)'
+            : '섹션 4: 상품 판매 예정(Coming Soon) · 포함내역·소요시간·위치 요약 인포그래픽 카드',
     aiPrompt:
       i === 0
         ? 'Wide editorial banner of Songdo Central Park and Hanok roofs in Incheon South Korea, clear sky, magazine cover quality'
@@ -1054,7 +1057,7 @@ export function buildCompanionMediaExtras(output, input = {}, groundTruth = load
       enTitle:
         contentType === 'culture_magazine'
           ? `Incheon & Songdo Cultural Guide: ${sanitizeTrendText(trendTitleClean, 46)}`
-          : `SOMSSI Songdo 120-Min Gayageum & Hanbok Class · ${sanitizeTrendText(trendTitleClean, 36)}`,
+          : `[Coming Soon] SOMSSI Songdo 120-Min Gayageum & Hanbok Tour · ${sanitizeTrendText(trendTitleClean, 28)}`,
       enSections: enBlogSections,
       bilingualSections: (output.naver_blog?.sections || []).map((krSec, idx) => ({
         h2_kr: krSec.h2,

@@ -130,5 +130,22 @@ test('Different live RSS or custom trends dynamically change all 4 channels (Ree
   assert.notEqual(resA.output.threads.text, resB.output.threads.text);
   assert.notEqual(resA.output.naver_blog.title, resB.output.naver_blog.title);
   assert.notEqual(resA.output.naver_blog.sections[0].body, resB.output.naver_blog.sections[0].body);
+
+  for (const preset of PRESET_TRENDS) {
+    const r = await runCopilot({
+      mode: 'generate',
+      date: '2026-11-15',
+      contentType: preset.contentType,
+      pillar: preset.pillar,
+      trend: preset
+    });
+    assert.equal(r.validation.valid, true, `Preset ${preset.id} errors: ${r.validation.errors.join('; ')}`);
+    assert.equal(r.validation.warnings.length, 0, `Preset ${preset.id} warnings: ${r.validation.warnings.join('; ')}`);
+    const fullStr = JSON.stringify(r.output);
+    assert.ok(
+      /coming soon|판매\s*예정|오픈\s*예정/i.test(fullStr),
+      `Preset ${preset.id} should mention Coming Soon / 상품 판매 예정`
+    );
+  }
 });
 

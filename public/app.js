@@ -168,7 +168,7 @@ function renderIgCardToCanvas(canvas, card, slideIdx, totalSlides) {
   // Top Header Badge
   ctx.fillStyle = accent;
   ctx.font = '700 28px -apple-system, BlinkMacSystemFont, "Noto Sans KR", sans-serif';
-  const roleLabels = ['01 · COVER', '02 · CONTEXT', '03 · EXPERIENCE', '04 · BOOKING & GUIDE'];
+  const roleLabels = ['01 · COVER', '02 · CONTEXT', '03 · EXPERIENCE', '04 · COMING SOON & GUIDE'];
   ctx.fillText(roleLabels[slideIdx] || `0${slideIdx + 1}`, 100, 130);
 
   ctx.fillStyle = 'rgba(255,255,255,0.75)';
@@ -208,8 +208,8 @@ function renderIgCardToCanvas(canvas, card, slideIdx, totalSlides) {
 
   // Footer Brand Sign-off
   ctx.fillStyle = '#ffffff';
-  ctx.font = '700 28px -apple-system, BlinkMacSystemFont, "Noto Sans KR", sans-serif';
-  ctx.fillText('줄을 다루는 솜씨 · SOMSSI SONGDO, INCHEON', 100, H - 100);
+  ctx.font = '700 26px -apple-system, BlinkMacSystemFont, "Noto Sans KR", sans-serif';
+  ctx.fillText('줄을 다루는 솜씨 (상품 판매 예정 · COMING SOON) · SOMSSI SONGDO', 100, H - 100);
 }
 
 /**
@@ -268,8 +268,8 @@ function renderBlogSectionCanvas(canvas, bannerInfo, secIdx) {
     secIdx === 2
       ? ['1단계: 한복·전통 다과 (25분)', '2단계: 기초 주법 (30분)', '3단계: 아리랑 연주 (45분)', '4단계: 촬영 (20분)']
       : secIdx === 3
-        ? ['송도 센트럴파크 인근 (공항 25분)', '120분 올인클루시브', '1인 99,000 KRW (부가세 포함)', 'KR / EN 진행']
-        : ['인천 송도 센트럴파크', '한국 전통 문화·예술', '가야금 & 한복 & 다과', '줄을 다루는 솜씨'];
+        ? ['상품 판매 예정 (Coming Soon)', '송도 센트럴파크 인근', '120분 · 1인 99,000 KRW', 'KR / EN 진행']
+        : ['인천 송도 센트럴파크', '한국 전통 문화·예술', '가야금 & 한복 & 다과', '줄을 다루는 솜씨 (판매예정)'];
 
   let bx = 84;
   const by = H - 135;

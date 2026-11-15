@@ -3,10 +3,10 @@
   "description": "Verified RAG Knowledge Base for SOMSSI Class (2x/week) & Incheon / K-Culture Editorial Magazine (5x/week)",
   "weekly_schedule": {
     "1": { "day_kr": "월요일", "pillar": "k_pop_drama", "content_type": "culture_magazine", "label": "K-Pop · K-Drama 최신 문화·예술 뉴스" },
-    "2": { "day_kr": "화요일", "pillar": "somssi_class", "content_type": "somssi_class", "label": "[정기 홍보 1] 《줄을 다루는 솜씨》 가야금·한복 120분 클래스" },
+    "2": { "day_kr": "화요일", "pillar": "somssi_class", "content_type": "somssi_class", "label": "[상품 출시 예고 1] 《줄을 다루는 솜씨》 가야금·한복 관광상품 (판매 예정)" },
     "3": { "day_kr": "수요일", "pillar": "incheon_tourism", "content_type": "culture_magazine", "label": "인천·송도 관광지 & 문화예술 공간 소개" },
     "4": { "day_kr": "목요일", "pillar": "incheon_food_tea", "content_type": "culture_magazine", "label": "인천 로컬 미식 & 한국 전통 다과·차 문화" },
-    "5": { "day_kr": "금요일", "pillar": "somssi_class", "content_type": "somssi_class", "label": "[정기 홍보 2] 《줄을 다루는 솜씨》 환승·주말 원데이클래스" },
+    "5": { "day_kr": "금요일", "pillar": "somssi_class", "content_type": "somssi_class", "label": "[상품 출시 예고 2] 《줄을 다루는 솜씨》 환승·주말 관광상품 (판매 예정)" },
     "6": { "day_kr": "토요일", "pillar": "korean_tradition", "content_type": "culture_magazine", "label": "한국 전통 문화·한복·국악 교양 스토리" },
     "0": { "day_kr": "일요일", "pillar": "weekly_curation", "content_type": "culture_magazine", "label": "주말 인천 & K-컬처 큐레이션 가이드" }
   },
@@ -14,18 +14,18 @@
     {
       "id": "rag-timetable-120",
       "category": "somssi_class",
-      "title": "120-Minute Session Flow (120분 수업 구성)",
-      "fact_en": "The 120-minute session flows through 4 stages: (1) Welcome traditional Korean tea & refreshments and Hanbok fitting (25 min), (2) Introduction to the 12-string gayageum and basic plucking/flicking techniques using SOMSSI's textbook 《줄을 다루는 솜씨》 (30 min), (3) Step-by-step practice of the main melody of 'Arirang' for complete beginners (45 min), (4) Solo/ensemble performance recording and Hanbok photo time (20 min).",
-      "fact_kr": "120분 클래스는 4단계로 진행돼요: (1) 웰컴 전통 다과·차 시음 및 한복 착용(25분), (2) 자체 교재 《줄을 다루는 솜씨》를 활용한 12현 가야금 구조 이해와 기본 주법 익히기(30분), (3) 악보를 못 읽는 입문자도 따라 할 수 있는 '아리랑' 주선율 단계별 연습(45분), (4) 나만의 연주 영상 촬영 및 한복 포토타임(20분).",
-      "tags": ["schedule", "120분", "일정", "타임테이블", "hanbok", "tea", "arirang"]
+      "title": "Upcoming 120-Minute Tourism Product Flow (출시 예정 120분 프로그램 구성)",
+      "fact_en": "Scheduled to launch soon in Songdo (Coming Soon), the 120-minute tourism program flows through 4 stages: (1) Welcome traditional Korean tea & refreshments and Hanbok fitting (25 min), (2) Introduction to the 12-string gayageum and basic plucking/flicking techniques using SOMSSI's upcoming textbook 《줄을 다루는 솜씨》 (30 min), (3) Step-by-step practice of the main melody of 'Arirang' for complete beginners (45 min), (4) Solo/ensemble performance recording and Hanbok photo time (20 min).",
+      "fact_kr": "현재 송도에서 오픈 준비 중이며 곧 판매 예정인 120분 문화관광 상품은 4단계로 구성돼요: (1) 웰컴 전통 다과·차 시음 및 한복 착용(25분), (2) 자체 교재 《줄을 다루는 솜씨》를 활용한 12현 가야금 구조 이해와 기본 주법 익히기(30분), (3) 악보를 못 읽는 입문자도 따라 할 수 있는 '아리랑' 주선율 단계별 연습(45분), (4) 나만의 연주 영상 촬영 및 한복 포토타임(20분).",
+      "tags": ["schedule", "120분", "일정", "타임테이블", "hanbok", "tea", "arirang", "판매예정", "coming soon"]
     },
     {
       "id": "rag-textbook-method",
       "category": "somssi_class",
-      "title": "Beginner-Friendly Textbook 《줄을 다루는 솜씨》",
-      "fact_en": "SOMSSI's in-house textbook 《줄을 다루는 솜씨》 uses intuitive number and string-color guides so participants who cannot read sheet music can play 'Arirang' within a single session.",
-      "fact_kr": "자체 교재 《줄을 다루는 솜씨》는 오선보 대신 직관적인 줄 번호와 손가락 가이드를 사용해 악보를 전혀 읽지 못하는 외국인·입문자도 한 번의 수업으로 '아리랑' 선율을 연주할 수 있도록 구성되어 있어요.",
-      "tags": ["textbook", "curriculum", "줄을 다루는 솜씨", "beginner", "sheet music", "아리랑"]
+      "title": "Upcoming Beginner-Friendly Textbook 《줄을 다루는 솜씨》 (출시 준비 중)",
+      "fact_en": "Currently being prepared for upcoming sales launch, SOMSSI's in-house textbook 《줄을 다루는 솜씨》 uses intuitive number and string-color guides so participants who cannot read sheet music can learn to play 'Arirang' within a single session.",
+      "fact_kr": "현재 정식 출시를 앞두고 준비 중인 자체 교재 《줄을 다루는 솜씨》는 오선보 대신 직관적인 줄 번호와 손가락 가이드를 사용해 악보를 전혀 읽지 못하는 외국인·입문자도 한 번의 수업으로 '아리랑' 선율을 연주할 수 있도록 기획된 관광 프로그램이에요.",
+      "tags": ["textbook", "curriculum", "줄을 다루는 솜씨", "beginner", "sheet music", "아리랑", "판매예정"]
     },
     {
       "id": "rag-instrument-gayageum",
@@ -55,7 +55,7 @@
       "id": "rag-incheon-food-tea",
       "category": "incheon_food_tea",
       "title": "Incheon Local Food & Traditional Korean Tea/Refreshments (Dagwa)",
-      "fact_en": "Incheon is famous for Sinpo International Market's sweet-and-spicy dakgang정 (crispy glazed chicken), Chinatown's jajangmyeon heritage, coastal seafood in Eulwangni and Soraepogu, and tranquil Korean tea houses serving seasonal floral teas with traditional dagwa (yakgwa, dasik, jeonggwa).",
+      "fact_en": "Incheon is famous for Sinpo International Market's sweet-and-spicy dakgangjeong (crispy glazed chicken), Chinatown's jajangmyeon heritage, coastal seafood in Eulwangni and Soraepogu, and tranquil Korean tea houses serving seasonal floral teas with traditional dagwa (yakgwa, dasik, jeonggwa).",
       "fact_kr": "인천은 신포국제시장의 매콤달콤한 닭강정, 차이나타운의 짜장면 발상지 미식, 을왕리·소래포구의 서해안 해산물 요리뿐만 아니라, 약과·다식·정과 등 계절 다과와 함께 즐기는 한국 전통 다도 문화까지 다채로운 미식 경험을 품고 있어요.",
       "tags": ["음식", "맛집", "신포국제시장", "닭강정", "다과", "약과", "전통차", "food", "tea"]
     },
@@ -70,10 +70,10 @@
     {
       "id": "rag-b2b-concierge",
       "category": "b2b",
-      "title": "B2B Concierge & Travel Agency Recommendation Points",
-      "fact_en": "For hotel concierges and inbound travel agencies, the class offers a fixed 120-minute duration, all-inclusive transparent pricing (99,000 KRW per person, VAT included), English and Korean instruction, and no prior musical skill requirement.",
-      "fact_kr": "호텔 컨시어지와 인바운드 여행사 입장에서는 120분 정시 운영, 한복·다과·레슨이 모두 포함된 정찰가(1인 99,000원, 부가세 포함), 한국어·영어 동시 안내, 음악 경험이 없어도 완주 가능한 커리큘럼 덕분에 외국인 투숙객·여행객에게 안정적으로 추천할 수 있어요.",
-      "tags": ["b2b", "concierge", "호텔", "여행사", "컨시어지", "외국인", "추천"]
+      "title": "B2B Concierge & Travel Agency Pre-Launch Preview Points (출시 예정 관광상품 안내)",
+      "fact_en": "Scheduled to open for sales soon, this upcoming tourism product offers hotel concierges and inbound travel agencies a fixed 120-minute duration, all-inclusive transparent pricing (99,000 KRW per person, VAT included), English and Korean instruction, and no prior musical skill requirement.",
+      "fact_kr": "곧 정식 판매 오픈 예정인 이 문화관광 상품은 호텔 컨시어지와 인바운드 여행사 입장에서 120분 정시 운영, 한복·다과·레슨이 모두 포함된 정찰가(1인 99,000원, 부가세 포함), 한국어·영어 동시 안내, 음악 경험이 없어도 완주 가능한 커리큘럼으로 기획되어 향후 외국인 투숙객·여행객 대상 추천 코스로 사전 문의를 받고 있어요.",
+      "tags": ["b2b", "concierge", "호텔", "여행사", "컨시어지", "외국인", "추천", "판매예정"]
     }
   ]
 }

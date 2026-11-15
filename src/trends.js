@@ -13,8 +13,8 @@ export const WEEKLY_PILLARS = [
     dayKr: '화요일 (Tue)',
     pillar: 'somssi_class',
     contentType: 'somssi_class',
-    badge: '정기 홍보 1/2 (주 2회)',
-    title: '《줄을 다루는 솜씨》 송도 120분 가야금·한복 원데이클래스',
+    badge: '상품 출시 예고 1/2 (주 2회)',
+    title: '《줄을 다루는 솜씨》 송도 120분 가야금·한복 관광상품 (상품 판매 예정)',
     rssQuery: 'Korean traditional music gayageum class Hanbok experience'
   },
   {
@@ -40,8 +40,8 @@ export const WEEKLY_PILLARS = [
     dayKr: '금요일 (Fri)',
     pillar: 'somssi_class',
     contentType: 'somssi_class',
-    badge: '정기 홍보 2/2 (주 2회)',
-    title: '《줄을 다루는 솜씨》 인천공항 환승 & 주말 송도 가야금 클래스',
+    badge: '상품 출시 예고 2/2 (주 2회)',
+    title: '《줄을 다루는 솜씨》 인천공항 환승 & 주말 송도 관광상품 (상품 판매 예정)',
     rssQuery: 'Incheon Airport layover tour cultural experience Songdo'
   },
   {
@@ -72,7 +72,7 @@ export const PRESET_TRENDS = [
     title: "K-pop's recent gugak fusion sound draws global listeners to traditional Korean strings",
     summary:
       'Global music fans are increasingly curious about traditional Korean instruments after hearing gugak string melodies woven into recent K-pop releases, searching for hands-on ways to hear and pluck the gayageum in Korea.',
-    source: 'Korea Culture & Tourism Trend Brief (화요일 정기 클래스)',
+    source: 'Korea Culture & Tourism Trend Brief (화요일 · 상품 판매 예정 티저)',
     language: 'en'
   },
   {
@@ -82,7 +82,7 @@ export const PRESET_TRENDS = [
     title: '인천공항 장시간 환승객 사이에서 공항 인근 반나절 로컬 한국문화 체험 수요 증가',
     summary:
       '인천국제공항을 경유하는 외국인 환승 여행객들이 단순 쇼핑 대신 공항에서 30분 이내로 이동 가능한 송도 일대에서 한복과 전통차, 전통악기를 한 번에 경험하는 실내 프로그램에 관심을 보이고 있다.',
-    source: 'Incheon Inbound Travel Digest (금요일 정기 클래스)',
+    source: 'Incheon Inbound Travel Digest (금요일 · 상품 판매 예정 티저)',
     language: 'ko'
   },
   {
