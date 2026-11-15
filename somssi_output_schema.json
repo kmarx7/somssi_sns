@@ -1,0 +1,106 @@
+{
+  "name": "somssi_marketing_output",
+  "strict": true,
+  "schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["mode", "trend_fit", "reels", "instagram_feed", "threads", "naver_blog", "facts_used", "reviewer_notes"],
+    "properties": {
+      "mode": { "type": "string", "enum": ["generate", "revise"] },
+      "trend_fit": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["score", "skip", "angle"],
+        "properties": {
+          "score": { "type": "integer" },
+          "skip": { "type": "boolean" },
+          "angle": { "type": "string" }
+        }
+      },
+      "reels": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["hook", "onscreen_text", "caption", "hashtags"],
+        "properties": {
+          "hook": { "$ref": "#/$defs/bilingual" },
+          "onscreen_text": { "type": "array", "items": { "type": "string" } },
+          "caption": { "type": "string" },
+          "hashtags": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "instagram_feed": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["cards", "caption", "hashtags"],
+        "properties": {
+          "cards": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["title", "body"],
+              "properties": {
+                "title": { "$ref": "#/$defs/bilingual" },
+                "body": { "$ref": "#/$defs/bilingual" }
+              }
+            }
+          },
+          "caption": { "type": "string" },
+          "hashtags": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "threads": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["text"],
+        "properties": { "text": { "type": "string" } }
+      },
+      "naver_blog": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "sections", "en_summary", "keywords"],
+        "properties": {
+          "title": { "type": "string" },
+          "sections": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["h2", "body"],
+              "properties": {
+                "h2": { "type": "string" },
+                "body": { "type": "string" }
+              }
+            }
+          },
+          "en_summary": { "type": "string" },
+          "keywords": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "facts_used": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["fact", "source"],
+          "properties": {
+            "fact": { "type": "string" },
+            "source": { "type": "string", "enum": ["ground_truth", "rag"] }
+          }
+        }
+      },
+      "reviewer_notes": { "type": "array", "items": { "type": "string" } }
+    },
+    "$defs": {
+      "bilingual": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kr", "en"],
+        "properties": {
+          "kr": { "type": "string" },
+          "en": { "type": "string" }
+        }
+      }
+    }
+  }
+}
